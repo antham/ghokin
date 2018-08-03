@@ -14,6 +14,15 @@ import (
 var commandMatcher map[string]string
 
 var tableIndent = 6
+func formatComments(tokens []*gherkin.Token) string {
+	comments := []string{}
+
+	for _, token := range tokens {
+		comments = append(comments, token.Text)
+	}
+
+	return strings.Join(comments, "\n")
+}
 
 func formatStepOrExampleLine(token *gherkin.Token) string {
 	return fmt.Sprintf("%s%s%s\n", strings.Repeat(" ", stepIndent), token.Keyword, token.Text)

@@ -8,6 +8,22 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestFormatComments(t *testing.T) {
+	tokens := []*gherkin.Token{
+		&gherkin.Token{
+			Text: "# Hello world !",
+		},
+		&gherkin.Token{
+			Text: "# Hello universe !",
+		},
+	}
+
+	expected := `# Hello world !
+# Hello universe !`
+
+	assert.Equal(t, expected, formatComments(tokens))
+}
+
 func TestFormatStepOrExampleLine(t *testing.T) {
 	token := &gherkin.Token{Keyword: "Then ", Text: "match some JSON properties"}
 	expected := "    Then match some JSON properties\n"
