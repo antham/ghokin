@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFormatFeatureDescription(t *testing.T) {
+func TestExtractTokensText(t *testing.T) {
 	tokens := []*gherkin.Token{
 		&gherkin.Token{
 			Text: "test1",
@@ -18,31 +18,12 @@ func TestFormatFeatureDescription(t *testing.T) {
 		},
 	}
 
-	expected := `    test1
-    test2
-`
+	expected := []string{"test1", "test2"}
 
-	assert.Equal(t, expected, formatFeatureDescription(tokens))
+	assert.Equal(t, expected, extractTokensText(tokens))
 }
 
-func TestFormatDocStringContent(t *testing.T) {
-	tokens := []*gherkin.Token{
-		&gherkin.Token{
-			Text: "test1",
-		},
-		&gherkin.Token{
-			Text: "test2",
-		},
-	}
-
-	expected := `      test1
-      test2
-`
-
-	assert.Equal(t, expected, formatDocStringContent(tokens))
-}
-
-func TestFormatTags(t *testing.T) {
+func TestExtractTokensItemsText(t *testing.T) {
 	tokens := []*gherkin.Token{
 		&gherkin.Token{
 			Items: []*gherkin.LineSpan{
@@ -58,52 +39,36 @@ func TestFormatTags(t *testing.T) {
 		},
 	}
 
-	expected := "@test1 @test2 @test3 @test4\n"
+	expected := []string{"@test1 @test2", "@test3 @test4"}
 
-	assert.Equal(t, expected, formatTags(tokens))
+	assert.Equal(t, expected, extractTokensItemsText(tokens))
 }
 
-func TestFormatComments(t *testing.T) {
-	tokens := []*gherkin.Token{
-		&gherkin.Token{
-			Text: "# Hello world !",
-		},
-		&gherkin.Token{
-			Text: "# Hello universe !",
-		},
-	}
-
-	expected := `# Hello world !
-# Hello universe !`
-
-	assert.Equal(t, expected, formatComments(tokens))
-}
-
-func TestFormatStepOrExampleLine(t *testing.T) {
+func TestExtractKeywordAndText(t *testing.T) {
 	token := &gherkin.Token{Keyword: "Then ", Text: "match some JSON properties"}
-	expected := "    Then match some JSON properties\n"
+	expected := []string{"Then match some JSON properties"}
 
-	assert.Equal(t, expected, formatStepOrExampleLine(token))
+	assert.Equal(t, expected, extractKeywordAndText(token))
 }
 
-func TestFormatFeatureOrBackgroundLine(t *testing.T) {
+func TestExtractKeywordAndTextSeparatedWithAColon(t *testing.T) {
 	token := &gherkin.Token{Keyword: "Feature", Text: "Set api"}
-	expected := "Feature: Set api\n"
+	expected := []string{"Feature: Set api"}
 
-	assert.Equal(t, expected, formatFeatureOrBackgroundLine(token))
+	assert.Equal(t, expected, extractKeywordAndTextSeparatedWithAColon(token))
 }
 
-func TestFormatDocStringOrRuleLine(t *testing.T) {
+func TestExtractKeyword(t *testing.T) {
 	token := &gherkin.Token{Keyword: `"""`}
-	expected := `      """` + "\n"
+	expected := []string{`"""`}
 
-	assert.Equal(t, expected, formatDocStringOrRuleLine(token))
+	assert.Equal(t, expected, extractKeyword(token))
 }
 
-func TestFormatTable(t *testing.T) {
+func TestExtractTableRows(t *testing.T) {
 	type scenario struct {
 		tokens []*gherkin.Token
-		test   func(string)
+		test   func([]string)
 	}
 
 	scenarios := []scenario{
@@ -128,18 +93,19 @@ func TestFormatTable(t *testing.T) {
 					},
 				},
 			},
-			func(output string) {
-				expected := `      | whatever | whatever whatever |
-      | test     | test              |
-      | t        | t                 |
-`
+			func(output []string) {
+				expected := []string{
+					"| whatever | whatever whatever |",
+					"| test     | test              |",
+					"| t        | t                 |",
+				}
 				assert.Equal(t, expected, output)
 			},
 		},
 	}
 
 	for _, scenario := range scenarios {
-		scenario.test(formatTableRows(scenario.tokens))
+		scenario.test(extractTableRows(scenario.tokens))
 	}
 }
 

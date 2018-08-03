@@ -17,61 +17,45 @@ var featureDescIndent = 4
 var tableIndent = 6
 var stepIndent = 4
 
-func formatFeatureDescription(tokens []*gherkin.Token) string {
-	desc := []string{}
-
-	for _, token := range tokens {
-		desc = append(desc, strings.Repeat(" ", featureDescIndent)+token.Text)
-	}
-
-	return strings.Join(desc, "\n") + "\n"
-}
-
-func formatDocStringContent(tokens []*gherkin.Token) string {
+func extractTokensText(tokens []*gherkin.Token) []string {
 	content := []string{}
 
 	for _, token := range tokens {
-		content = append(content, strings.Repeat(" ", tableIndent)+token.Text)
+		content = append(content, token.Text)
 	}
 
-	return strings.Join(content, "\n") + "\n"
+	return content
 }
 
-func formatTags(tokens []*gherkin.Token) string {
-	tags := []string{}
+func extractTokensItemsText(tokens []*gherkin.Token) []string {
+	content := []string{}
 
 	for _, token := range tokens {
-		for _, data := range token.Items {
-			tags = append(tags, data.Text)
+		t := []string{}
+
+		for _, item := range token.Items {
+			t = append(t, item.Text)
 		}
+
+		content = append(content, strings.Join(t, " "))
 	}
 
-	return fmt.Sprintf("%s\n", strings.Join(tags, " "))
+	return content
 }
 
-func formatComments(tokens []*gherkin.Token) string {
-	comments := []string{}
-
-	for _, token := range tokens {
-		comments = append(comments, token.Text)
-	}
-
-	return strings.Join(comments, "\n")
+func extractKeywordAndText(token *gherkin.Token) []string {
+	return []string{fmt.Sprintf("%s%s", token.Keyword, token.Text)}
 }
 
-func formatStepOrExampleLine(token *gherkin.Token) string {
-	return fmt.Sprintf("%s%s%s\n", strings.Repeat(" ", stepIndent), token.Keyword, token.Text)
+func extractKeywordAndTextSeparatedWithAColon(token *gherkin.Token) []string {
+	return []string{fmt.Sprintf("%s: %s", token.Keyword, token.Text)}
 }
 
-func formatFeatureOrBackgroundLine(token *gherkin.Token) string {
-	return fmt.Sprintf("%s: %s\n", token.Keyword, token.Text)
+func extractKeyword(token *gherkin.Token) []string {
+	return []string{token.Keyword}
 }
 
-func formatDocStringOrRuleLine(token *gherkin.Token) string {
-	return fmt.Sprintf("%s%s\n", strings.Repeat(" ", tableIndent), token.Keyword)
-}
-
-func formatTableRows(tokens []*gherkin.Token) string {
+func extractTableRows(tokens []*gherkin.Token) []string {
 	rows := [][]string{}
 
 	for _, tab := range tokens {
@@ -90,7 +74,7 @@ func formatTableRows(tokens []*gherkin.Token) string {
 
 	for _, row := range rows {
 		inputs := []interface{}{}
-		fmtDirective := strings.Repeat(" ", tableIndent)
+		fmtDirective := ""
 
 		for i, str := range row {
 			inputs = append(inputs, str)
@@ -102,7 +86,7 @@ func formatTableRows(tokens []*gherkin.Token) string {
 		tableRows = append(tableRows, fmt.Sprintf(fmtDirective, inputs...))
 	}
 
-	return strings.Join(tableRows, "\n") + "\n"
+	return tableRows
 }
 
 func calculateLonguestLineLengthPerRow(rows [][]string) []int {
