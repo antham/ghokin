@@ -8,6 +8,24 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+
+func TestFormatDocStringContent(t *testing.T) {
+	tokens := []*gherkin.Token{
+		&gherkin.Token{
+			Text: "test1",
+		},
+		&gherkin.Token{
+			Text: "test2",
+		},
+	}
+
+	expected := `      test1
+      test2
+`
+
+	assert.Equal(t, expected, formatDocStringContent(tokens))
+}
+
 func TestFormatTags(t *testing.T) {
 	tokens := []*gherkin.Token{
 		&gherkin.Token{
