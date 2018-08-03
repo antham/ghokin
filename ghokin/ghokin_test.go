@@ -8,6 +8,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestFormatStepOrExampleLine(t *testing.T) {
+	token := &gherkin.Token{Keyword: "Then ", Text: "match some JSON properties"}
+	expected := "    Then match some JSON properties\n"
+
+	assert.Equal(t, expected, formatStepOrExampleLine(token))
+}
+
 func TestFormatFeatureOrBackgroundLine(t *testing.T) {
 	token := &gherkin.Token{Keyword: "Feature", Text: "Set api"}
 	expected := "Feature: Set api\n"
