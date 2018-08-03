@@ -8,6 +8,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestFormatDocStringOrRuleLine(t *testing.T) {
+	token := &gherkin.Token{Keyword: `"""`}
+	expected := `      """` + "\n"
+
+	assert.Equal(t, expected, formatDocStringOrRuleLine(token))
+}
+
 func TestFormatTable(t *testing.T) {
 	type scenario struct {
 		tokens []*gherkin.Token

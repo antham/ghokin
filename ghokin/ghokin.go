@@ -7,11 +7,16 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/cucumber/gherkin-go"
 )
 
 var commandMatcher map[string]string
 
 var tableIndent = 6
+func formatDocStringOrRuleLine(token *gherkin.Token) string {
+	return fmt.Sprintf("%s%s\n", strings.Repeat(" ", tableIndent), token.Keyword)
+}
 
 func formatTableRows(tokens []*gherkin.Token) string {
 	rows := [][]string{}
