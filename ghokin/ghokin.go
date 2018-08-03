@@ -14,6 +14,10 @@ import (
 var commandMatcher map[string]string
 
 var tableIndent = 6
+func formatFeatureOrBackgroundLine(token *gherkin.Token) string {
+	return fmt.Sprintf("%s: %s\n", token.Keyword, token.Text)
+}
+
 func formatDocStringOrRuleLine(token *gherkin.Token) string {
 	return fmt.Sprintf("%s%s\n", strings.Repeat(" ", tableIndent), token.Keyword)
 }
