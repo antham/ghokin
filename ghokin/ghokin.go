@@ -18,11 +18,11 @@ var tableIndent = 6
 var stepIndent = 4
 
 
-func indentStrings(padding int, datas []string) []string {
+func indentStrings(padding int, lines []string) []string {
 	content := []string{}
 
-	for _, data := range datas {
-		content = append(content, strings.Repeat(" ", padding)+data)
+	for _, line := range lines {
+		content = append(content, strings.Repeat(" ", padding)+line)
 	}
 
 	return content
