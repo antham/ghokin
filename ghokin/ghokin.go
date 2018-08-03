@@ -13,8 +13,20 @@ var commandMatcher map[string]string
 
 var tableIndent = 6
 
-func formatTableRows(rows [][]string) (bytes.Buffer, error) {
-	var output bytes.Buffer
+func formatTableRows(tokens []*gherkin.Token) string {
+	rows := [][]string{}
+
+	for _, tab := range tokens {
+		row := []string{}
+
+		for _, data := range tab.Items {
+			row = append(row, data.Text)
+		}
+
+		rows = append(rows, row)
+	}
+
+	var tableRows []string
 
 	lengths := calculateLonguestLineLengthPerRow(rows)
 
@@ -27,14 +39,12 @@ func formatTableRows(rows [][]string) (bytes.Buffer, error) {
 			fmtDirective += "| %-" + strconv.Itoa(lengths[i]) + "s "
 		}
 
-		fmtDirective += "|\n"
+		fmtDirective += "|"
 
-		if _, err := output.WriteString(fmt.Sprintf(fmtDirective, inputs...)); err != nil {
-			return bytes.Buffer{}, err
-		}
+		tableRows = append(tableRows, fmt.Sprintf(fmtDirective, inputs...))
 	}
 
-	return output, nil
+	return strings.Join(tableRows, "\n") + "\n"
 }
 
 func calculateLonguestLineLengthPerRow(rows [][]string) []int {

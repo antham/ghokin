@@ -9,30 +9,46 @@ import (
 )
 
 func TestFormatTable(t *testing.T) {
-	input := [][]string{
-		[]string{
-			"whatever",
-			"whatever whatever",
-		},
-		[]string{
-			"test",
-			"test",
-		},
-		[]string{
-			"t",
-			"t",
-		},
+	type scenario struct {
+		tokens []*gherkin.Token
+		test   func(string)
 	}
 
-	expected := `      | whatever | whatever whatever |
+	scenarios := []scenario{
+		{
+			[]*gherkin.Token{
+				&gherkin.Token{
+					Items: []*gherkin.LineSpan{
+						&gherkin.LineSpan{Text: "whatever"},
+						&gherkin.LineSpan{Text: "whatever whatever"},
+					},
+				},
+				&gherkin.Token{
+					Items: []*gherkin.LineSpan{
+						&gherkin.LineSpan{Text: "test"},
+						&gherkin.LineSpan{Text: "test"},
+					},
+				},
+				&gherkin.Token{
+					Items: []*gherkin.LineSpan{
+						&gherkin.LineSpan{Text: "t"},
+						&gherkin.LineSpan{Text: "t"},
+					},
+				},
+			},
+			func(output string) {
+				expected := `      | whatever | whatever whatever |
       | test     | test              |
       | t        | t                 |
 `
+				assert.Equal(t, expected, output)
+			},
+		},
+	}
 
-	actual, err := formatTableRows(input)
-
-	assert.NoError(t, err)
-	assert.Equal(t, expected, string(actual.String()))
+	for _, scenario := range scenarios {
+		scenario.test(formatTableRows(scenario.tokens))
+	}
 }
 
 func TestExtractCommand(t *testing.T) {
