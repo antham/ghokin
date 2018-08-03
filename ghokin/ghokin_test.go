@@ -58,11 +58,18 @@ func TestExtractTokensItemsText(t *testing.T) {
 	assert.Equal(t, expected, extractTokensItemsText(tokens))
 }
 
-func TestExtractKeywordAndText(t *testing.T) {
-	token := &gherkin.Token{Keyword: "Then ", Text: "match some JSON properties"}
-	expected := []string{"Then match some JSON properties"}
+func TestExtractTokensKeywordAndText(t *testing.T) {
+	tokens := []*gherkin.Token{
+		&gherkin.Token{Keyword: "Then ", Text: "match some JSON properties"},
+		&gherkin.Token{Keyword: "Then ", Text: "we do sometging"},
+	}
 
-	assert.Equal(t, expected, extractKeywordAndText(token))
+	expected := []string{
+		"Then match some JSON properties",
+		"Then we do something",
+	}
+
+	assert.Equal(t, expected, extractTokensKeywordAndText(tokens))
 }
 
 func TestExtractKeywordAndTextSeparatedWithAColon(t *testing.T) {

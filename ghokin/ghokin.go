@@ -54,8 +54,14 @@ func extractTokensItemsText(tokens []*gherkin.Token) []string {
 	return content
 }
 
-func extractKeywordAndText(token *gherkin.Token) []string {
-	return []string{fmt.Sprintf("%s%s", token.Keyword, token.Text)}
+func extractTokensKeywordAndText(tokens []*gherkin.Token) []string {
+	content := []string{}
+
+	for _, token := range tokens {
+		content = append(content, fmt.Sprintf("%s%s", token.Keyword, token.Text))
+	}
+
+	return content
 }
 
 func extractKeywordAndTextSeparatedWithAColon(token *gherkin.Token) []string {
