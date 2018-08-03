@@ -8,6 +8,20 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestIndentStrings(t *testing.T) {
+	datas := []string{
+		"hello",
+		"world",
+	}
+
+	expected := []string{
+		"    hello",
+		"    world",
+	}
+
+	assert.Equal(t, expected, indentStrings(4, datas))
+}
+
 func TestExtractTokensText(t *testing.T) {
 	tokens := []*gherkin.Token{
 		&gherkin.Token{

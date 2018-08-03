@@ -17,6 +17,17 @@ var featureDescIndent = 4
 var tableIndent = 6
 var stepIndent = 4
 
+
+func indentStrings(padding int, datas []string) []string {
+	content := []string{}
+
+	for _, data := range datas {
+		content = append(content, strings.Repeat(" ", padding)+data)
+	}
+
+	return content
+}
+
 func extractTokensText(tokens []*gherkin.Token) []string {
 	content := []string{}
 
