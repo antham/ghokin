@@ -13,8 +13,20 @@ import (
 
 var commandMatcher map[string]string
 
+var featureDescIndent = 4
 var tableIndent = 6
 var stepIndent = 4
+
+func formatFeatureDescription(tokens []*gherkin.Token) string {
+	desc := []string{}
+
+	for _, token := range tokens {
+		desc = append(desc, strings.Repeat(" ", featureDescIndent)+token.Text)
+	}
+
+	return strings.Join(desc, "\n") + "\n"
+}
+
 func formatDocStringContent(tokens []*gherkin.Token) string {
 	content := []string{}
 
@@ -24,6 +36,7 @@ func formatDocStringContent(tokens []*gherkin.Token) string {
 
 	return strings.Join(content, "\n") + "\n"
 }
+
 func formatTags(tokens []*gherkin.Token) string {
 	tags := []string{}
 
