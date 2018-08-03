@@ -14,6 +14,18 @@ import (
 var commandMatcher map[string]string
 
 var tableIndent = 6
+func formatTags(tokens []*gherkin.Token) string {
+	tags := []string{}
+
+	for _, token := range tokens {
+		for _, data := range token.Items {
+			tags = append(tags, data.Text)
+		}
+	}
+
+	return fmt.Sprintf("%s\n", strings.Join(tags, " "))
+}
+
 func formatComments(tokens []*gherkin.Token) string {
 	comments := []string{}
 

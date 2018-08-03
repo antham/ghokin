@@ -8,6 +8,27 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestFormatTags(t *testing.T) {
+	tokens := []*gherkin.Token{
+		&gherkin.Token{
+			Items: []*gherkin.LineSpan{
+				&gherkin.LineSpan{Text: "@test1"},
+				&gherkin.LineSpan{Text: "@test2"},
+			},
+		},
+		&gherkin.Token{
+			Items: []*gherkin.LineSpan{
+				&gherkin.LineSpan{Text: "@test3"},
+				&gherkin.LineSpan{Text: "@test4"},
+			},
+		},
+	}
+
+	expected := "@test1 @test2 @test3 @test4\n"
+
+	assert.Equal(t, expected, formatTags(tokens))
+}
+
 func TestFormatComments(t *testing.T) {
 	tokens := []*gherkin.Token{
 		&gherkin.Token{
