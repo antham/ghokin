@@ -23,10 +23,10 @@ func TestIndentStrings(t *testing.T) {
 
 func TestExtractTokensText(t *testing.T) {
 	tokens := []*gherkin.Token{
-		&gherkin.Token{
+		{
 			Text: "test1",
 		},
-		&gherkin.Token{
+		{
 			Text: "test2",
 		},
 	}
@@ -38,16 +38,16 @@ func TestExtractTokensText(t *testing.T) {
 
 func TestExtractTokensItemsText(t *testing.T) {
 	tokens := []*gherkin.Token{
-		&gherkin.Token{
+		{
 			Items: []*gherkin.LineSpan{
-				&gherkin.LineSpan{Text: "@test1"},
-				&gherkin.LineSpan{Text: "@test2"},
+				{Text: "@test1"},
+				{Text: "@test2"},
 			},
 		},
-		&gherkin.Token{
+		{
 			Items: []*gherkin.LineSpan{
-				&gherkin.LineSpan{Text: "@test3"},
-				&gherkin.LineSpan{Text: "@test4"},
+				{Text: "@test3"},
+				{Text: "@test4"},
 			},
 		},
 	}
@@ -59,8 +59,8 @@ func TestExtractTokensItemsText(t *testing.T) {
 
 func TestExtractTokensKeywordAndText(t *testing.T) {
 	tokens := []*gherkin.Token{
-		&gherkin.Token{Keyword: "Then ", Text: "match some JSON properties"},
-		&gherkin.Token{Keyword: "Then ", Text: "we do something"},
+		{Keyword: "Then ", Text: "match some JSON properties"},
+		{Keyword: "Then ", Text: "we do something"},
 	}
 
 	expected := []string{
@@ -94,22 +94,22 @@ func TestExtractTableRows(t *testing.T) {
 	scenarios := []scenario{
 		{
 			[]*gherkin.Token{
-				&gherkin.Token{
+				{
 					Items: []*gherkin.LineSpan{
-						&gherkin.LineSpan{Text: "whatever"},
-						&gherkin.LineSpan{Text: "whatever whatever"},
+						{Text: "whatever"},
+						{Text: "whatever whatever"},
 					},
 				},
-				&gherkin.Token{
+				{
 					Items: []*gherkin.LineSpan{
-						&gherkin.LineSpan{Text: "test"},
-						&gherkin.LineSpan{Text: "test"},
+						{Text: "test"},
+						{Text: "test"},
 					},
 				},
-				&gherkin.Token{
+				{
 					Items: []*gherkin.LineSpan{
-						&gherkin.LineSpan{Text: "t"},
-						&gherkin.LineSpan{Text: "t"},
+						{Text: "t"},
+						{Text: "t"},
 					},
 				},
 			},
