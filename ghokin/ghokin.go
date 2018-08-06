@@ -11,7 +11,6 @@ import (
 	"github.com/cucumber/gherkin-go"
 )
 
-var commandMatcher map[string]string
 
 var featureDescIndent = 4
 var tableIndent = 6
@@ -124,15 +123,15 @@ func calculateLonguestLineLengthPerRow(rows [][]string) []int {
 	return lengths
 }
 
-func extractCommand(comment *gherkin.Token) *exec.Cmd {
+func extractCommand(token *gherkin.Token, commands map[string]string) *exec.Cmd {
 	re := regexp.MustCompile("(\\@[a-zA-Z0-9]+)")
-	matches := re.FindStringSubmatch(comment.Text)
+	matches := re.FindStringSubmatch(token.Text)
 
 	if len(matches) == 0 {
 		return nil
 	}
 
-	if cmd, ok := commandMatcher[matches[0][1:]]; ok {
+	if cmd, ok := commands[matches[0][1:]]; ok {
 		return exec.Command("sh", "-c", cmd)
 	}
 

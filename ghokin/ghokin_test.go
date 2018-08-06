@@ -136,7 +136,7 @@ func TestExtractCommand(t *testing.T) {
 		test  func(*exec.Cmd)
 	}
 
-	commandMatcher = map[string]string{
+	commands := map[string]string{
 		"cat": "cat",
 		"jq":  "jq",
 	}
@@ -171,6 +171,6 @@ func TestExtractCommand(t *testing.T) {
 	}
 
 	for _, scenario := range scenarios {
-		scenario.test(extractCommand(scenario.token))
+		scenario.test(extractCommand(scenario.token, commands))
 	}
 }
