@@ -61,7 +61,7 @@ func TestExtractTokensItemsText(t *testing.T) {
 func TestExtractTokensKeywordAndText(t *testing.T) {
 	tokens := []*gherkin.Token{
 		&gherkin.Token{Keyword: "Then ", Text: "match some JSON properties"},
-		&gherkin.Token{Keyword: "Then ", Text: "we do sometging"},
+		&gherkin.Token{Keyword: "Then ", Text: "we do something"},
 	}
 
 	expected := []string{
