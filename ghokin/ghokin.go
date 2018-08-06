@@ -12,9 +12,6 @@ import (
 )
 
 
-var featureDescIndent = 4
-var tableIndent = 6
-var stepIndent = 4
 
 
 func indentStrings(padding int, lines []string) []string {
