@@ -14,6 +14,16 @@ import (
 
 
 
+func trimLinesSpace(lines []string) []string {
+	content := []string{}
+
+	for _, line := range lines {
+		content = append(content, strings.TrimSpace(line))
+	}
+
+	return content
+}
+
 func indentStrings(padding int, lines []string) []string {
 	content := []string{}
 

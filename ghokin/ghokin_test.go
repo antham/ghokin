@@ -174,3 +174,20 @@ func TestExtractCommand(t *testing.T) {
 		scenario.test(extractCommand(scenario.token, commands))
 	}
 }
+
+func TestTrimLinesSpace(t *testing.T) {
+	datas := []string{
+		"                        hello                          ",
+		`		world
+
+
+		`,
+	}
+
+	expected := []string{
+		"hello",
+		"world",
+	}
+
+	assert.Equal(t, expected, trimLinesSpace(datas))
+}
