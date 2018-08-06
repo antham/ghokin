@@ -3,6 +3,7 @@ package ghokin
 import (
 	"bytes"
 	"fmt"
+	"os"
 	"os/exec"
 	"regexp"
 	"strconv"
@@ -22,7 +23,24 @@ func (e CmdErr) Error() string {
 	return e.output
 }
 
+func extractSections(filename string) (*section, error) {
+	file, err := os.Open(filename)
 
+	if err != nil {
+		return &section{}, err
+	}
+
+	section := &section{}
+	builder := &tokenGenerator{section: section}
+
+	matcher := gherkin.NewMatcher(gherkin.GherkinDialectsBuildin())
+	scanner := gherkin.NewScanner(file)
+	parser := gherkin.NewParser(builder)
+
+	parser.StopAtFirstError(true)
+
+	return section, parser.Parse(scanner, matcher)
+}
 
 func trimLinesSpace(lines []string) []string {
 	content := []string{}

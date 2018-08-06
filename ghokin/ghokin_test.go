@@ -1,11 +1,10 @@
 package ghokin
 
 import (
-	"os/exec"
-	"testing"
-
 	"github.com/cucumber/gherkin-go"
 	"github.com/stretchr/testify/assert"
+	"os/exec"
+	"testing"
 )
 
 func TestIndentStrings(t *testing.T) {
@@ -228,5 +227,176 @@ func TestRunCommand(t *testing.T) {
 
 	for _, scenario := range scenarios {
 		scenario.test(runCommand(scenario.cmd, scenario.lines))
+	}
+}
+
+func TestExtractSections(t *testing.T) {
+	type scenario struct {
+		filename string
+		test     func(*section, error)
+	}
+
+	scenarios := []scenario{
+		{
+			"",
+			func(section *section, err error) {
+				assert.EqualError(t, err, "open : no such file or directory")
+			},
+		},
+		{
+			"fixtures/file.txt",
+			func(section *section, err error) {
+				assert.EqualError(t, err, "Parser errors:\n(1:1): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'whatever'")
+			},
+		},
+		{
+			"fixtures/feature.feature",
+			func(sec *section, err error) {
+				type test struct {
+					previousName string
+					currentName  string
+					nextName     string
+					values       []map[string]string
+				}
+
+				assert.NoError(t, err)
+				assert.Equal(t, sec.kind.Name(), "")
+
+				ts := []test{
+					{
+						"",
+						"FeatureLine",
+						"Other",
+						[]map[string]string{
+							{
+								"keyword": "Feature",
+								"text":    "Test",
+							},
+						},
+					},
+					{
+						"FeatureLine",
+						"Other",
+						"BackgroundLine",
+						[]map[string]string{
+							{
+								"keyword": "",
+								"text":    "  This is a description",
+							},
+							{
+								"keyword": "",
+								"text":    "",
+							},
+						},
+					},
+					{
+						"Other",
+						"BackgroundLine",
+						"StepLine",
+						[]map[string]string{
+							{
+								"keyword": "Background",
+								"text":    "",
+							},
+						},
+					},
+					{
+						"BackgroundLine",
+						"StepLine",
+						"ScenarioLine",
+						[]map[string]string{
+							{
+								"keyword": "Given ",
+								"text":    "something",
+							},
+						},
+					},
+					{
+						"StepLine",
+						"ScenarioLine",
+						"StepLine",
+						[]map[string]string{
+							{
+								"keyword": "Scenario",
+								"text":    "A scenario to test",
+							},
+						},
+					},
+					{
+						"ScenarioLine",
+						"StepLine",
+						"ScenarioLine",
+						[]map[string]string{
+							{
+								"keyword": "Given ",
+								"text":    "a thing",
+							},
+							{
+								"keyword": "Given ",
+								"text":    "something else",
+							},
+							{
+								"keyword": "Then ",
+								"text":    "something happened",
+							},
+						},
+					},
+					{
+						"StepLine",
+						"ScenarioLine",
+						"StepLine",
+						[]map[string]string{
+							{
+								"keyword": "Scenario",
+								"text":    "Another scenario to test",
+							},
+						},
+					},
+					{
+						"ScenarioLine",
+						"StepLine",
+						"",
+						[]map[string]string{
+							{
+								"keyword": "Given ",
+								"text":    "a second thing",
+							},
+							{
+								"keyword": "Given ",
+								"text":    "another second thing",
+							},
+							{
+								"keyword": "Then ",
+								"text":    "another thing happened",
+							},
+						},
+					},
+				}
+
+				sec = sec.next()
+
+				for i := 0; i < len(ts); i++ {
+					assert.Equal(t, sec.previous().kind.Name(), ts[i].previousName)
+					assert.Equal(t, sec.kind.Name(), ts[i].currentName)
+
+					if i == len(ts)-1 {
+						assert.Equal(t, sec.next(), (*section)(nil))
+					} else {
+						assert.Equal(t, sec.next().kind.Name(), ts[i].nextName)
+					}
+
+					for j, v := range sec.values {
+						assert.Equal(t, ts[i].values[j]["keyword"], v.Keyword)
+						assert.Equal(t, ts[i].values[j]["text"], v.Text)
+					}
+
+					sec = sec.next()
+				}
+			},
+		},
+	}
+
+	for _, scenario := range scenarios {
+		scenario.test(extractSections(scenario.filename))
 	}
 }
