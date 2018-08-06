@@ -191,3 +191,42 @@ func TestTrimLinesSpace(t *testing.T) {
 
 	assert.Equal(t, expected, trimLinesSpace(datas))
 }
+
+func TestRunCommand(t *testing.T) {
+	type scenario struct {
+		cmd   *exec.Cmd
+		lines []string
+		test  func([]string, error)
+	}
+
+	scenarios := []scenario{
+		{
+			nil,
+			[]string{},
+			func(lines []string, err error) {
+				assert.Empty(t, lines)
+				assert.NoError(t, err)
+			},
+		},
+		{
+			exec.Command("sh", "-c", "cat"),
+			[]string{"hello world !", "hello universe !"},
+			func(lines []string, err error) {
+				assert.Equal(t, []string{"hello world !", "hello universe !"}, lines)
+				assert.NoError(t, err)
+			},
+		},
+		{
+			exec.Command("sh", "-c", "catttttt"),
+			[]string{"hello world !", "hello universe !"},
+			func(lines []string, err error) {
+				assert.Equal(t, []string{}, lines)
+				assert.EqualError(t, err, "sh: catttttt: command not found")
+			},
+		},
+	}
+
+	for _, scenario := range scenarios {
+		scenario.test(runCommand(scenario.cmd, scenario.lines))
+	}
+}

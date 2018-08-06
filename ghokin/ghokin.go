@@ -11,6 +11,16 @@ import (
 	"github.com/cucumber/gherkin-go"
 )
 
+// CmdErr is thrown when an error occurred when calling
+// a command on an input, both stdout and stderr are stored
+type CmdErr struct {
+	output string
+}
+
+// Error outputs both stdout and stderr
+func (e CmdErr) Error() string {
+	return e.output
+}
 
 
 
@@ -143,4 +153,21 @@ func extractCommand(token *gherkin.Token, commands map[string]string) *exec.Cmd 
 	}
 
 	return nil
+}
+
+func runCommand(cmd *exec.Cmd, lines []string) ([]string, error) {
+	if len(lines) == 0 {
+		return lines, nil
+	}
+
+	datas := strings.Join(lines, "\n")
+	cmd.Stdin = strings.NewReader(datas)
+
+	o, err := cmd.CombinedOutput()
+
+	if err != nil {
+		return []string{}, CmdErr{strings.TrimRight(string(o), "\n")}
+	}
+
+	return strings.Split(strings.TrimRight(string(o), "\n"), "\n"), nil
 }
