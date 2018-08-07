@@ -1,10 +1,13 @@
 package ghokin
 
 import (
-	"github.com/cucumber/gherkin-go"
-	"github.com/stretchr/testify/assert"
+	"bytes"
+	"io/ioutil"
 	"os/exec"
 	"testing"
+
+	"github.com/cucumber/gherkin-go"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestIndentStrings(t *testing.T) {
@@ -398,5 +401,38 @@ func TestExtractSections(t *testing.T) {
 
 	for _, scenario := range scenarios {
 		scenario.test(extractSections(scenario.filename))
+	}
+}
+
+func TestTransform(t *testing.T) {
+	type scenario struct {
+		filename string
+		test     func(bytes.Buffer, error)
+	}
+
+	scenarios := []scenario{
+		{
+			"fixtures/file1.feature",
+			func(buf bytes.Buffer, err error) {
+				assert.NoError(t, err)
+
+				b, e := ioutil.ReadFile("fixtures/file1.feature")
+
+				assert.NoError(t, e)
+				assert.EqualValues(t, string(b[:len(b)-1]), buf.String())
+			},
+		},
+	}
+
+	for _, scenario := range scenarios {
+		s, err := extractSections(scenario.filename)
+
+		assert.NoError(t, err)
+
+		commands := map[string]string{
+			"seq": "seq 1 3",
+		}
+
+		scenario.test(transform(s, indent{2, 4, 6}, commands))
 	}
 }

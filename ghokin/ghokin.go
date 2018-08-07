@@ -42,11 +42,125 @@ func extractSections(filename string) (*section, error) {
 	return section, parser.Parse(scanner, matcher)
 }
 
+func transform(section *section, indentConf indent, commands commands) (bytes.Buffer, error) {
+	paddings := map[gherkin.TokenType]int{
+		gherkin.TokenType_FeatureLine:        0,
+		gherkin.TokenType_BackgroundLine:     indentConf.backgroundAndScenario,
+		gherkin.TokenType_ScenarioLine:       indentConf.backgroundAndScenario,
+		gherkin.TokenType_DocStringSeparator: indentConf.tableAndDocString,
+		gherkin.TokenType_RuleLine:           indentConf.tableAndDocString,
+		gherkin.TokenType_StepLine:           indentConf.step,
+		gherkin.TokenType_ExamplesLine:       indentConf.step,
+		gherkin.TokenType_Other:              indentConf.tableAndDocString,
+		gherkin.TokenType_TableRow:           indentConf.tableAndDocString,
+	}
+
+	var padding int
+	var cmd *exec.Cmd
+	document := []string{}
+
+	for sec := section; sec != nil; sec = sec.nex {
+		var lines []string
+
+		switch sec.kind {
+		case gherkin.TokenType_FeatureLine:
+			lines = extractKeywordAndTextSeparatedWithAColon(sec.values[0])
+			padding = paddings[sec.kind]
+		case gherkin.TokenType_BackgroundLine, gherkin.TokenType_ScenarioLine:
+			lines = extractKeywordAndTextSeparatedWithAColon(sec.values[0])
+			padding = paddings[sec.kind]
+		case gherkin.TokenType_Comment:
+			var nt gherkin.TokenType
+			excluded := []gherkin.TokenType{gherkin.TokenType_Empty, gherkin.TokenType_TagLine, gherkin.TokenType_Comment}
+
+			if sec.next(excluded) != nil {
+				nt = sec.next(excluded).kind
+			}
+
+			if nt == 0 && sec.previous(excluded) != nil {
+				nt = sec.previous(excluded).kind
+			}
+
+			cmd = extractCommand(sec.values[0], commands)
+			lines = trimLinesSpace(extractTokensText(sec.values))
+			padding = paddings[nt]
+		case gherkin.TokenType_TagLine:
+			var nt gherkin.TokenType
+			excluded := []gherkin.TokenType{gherkin.TokenType_Empty, gherkin.TokenType_TagLine, gherkin.TokenType_Comment}
+
+			if sec.next(excluded) != nil {
+				nt = sec.next(excluded).kind
+			}
+
+			if nt == 0 && sec.previous(excluded) != nil {
+				nt = sec.previous(excluded).kind
+			}
+
+			lines = extractTokensItemsText(sec.values)
+			padding = paddings[nt]
+		case gherkin.TokenType_DocStringSeparator, gherkin.TokenType_RuleLine:
+			lines = extractKeyword(sec.values[0])
+			padding = paddings[sec.kind]
+		case gherkin.TokenType_Other:
+			lines = extractTokensText(sec.values)
+			excluded := []gherkin.TokenType{gherkin.TokenType_Empty}
+
+			if sec.previous(excluded) != nil && sec.previous(excluded).kind == gherkin.TokenType_FeatureLine {
+				lines = trimLinesSpace(lines)
+			}
+
+			padding = paddings[sec.kind]
+		case gherkin.TokenType_StepLine:
+			lines = extractTokensKeywordAndText(sec.values)
+			padding = paddings[sec.kind]
+		case gherkin.TokenType_ExamplesLine:
+			lines = extractKeywordAndTextSeparatedWithAColon(sec.values[0])
+			padding = paddings[sec.kind]
+		case gherkin.TokenType_TableRow:
+			lines = extractTableRows(sec.values)
+			padding = paddings[sec.kind]
+		case gherkin.TokenType_Empty:
+			lines = extractTokensItemsText(sec.values)
+		}
+
+		if sec.kind != gherkin.TokenType_Comment && sec.kind != gherkin.TokenType_DocStringSeparator && cmd != nil {
+			l, err := runCommand(cmd, lines)
+
+			if err != nil {
+				return bytes.Buffer{}, err
+			}
+
+			lines = l
+			cmd = nil
+		}
+
+		document = append(document, trimExtraTrailingSpace(indentStrings(padding, lines))...)
+	}
+
+	var buf bytes.Buffer
+
+	if _, err := buf.WriteString(strings.Join(document, "\n")); err != nil {
+		return bytes.Buffer{}, err
+	}
+
+	return buf, nil
+}
+
 func trimLinesSpace(lines []string) []string {
 	content := []string{}
 
 	for _, line := range lines {
 		content = append(content, strings.TrimSpace(line))
+	}
+
+	return content
+}
+
+func trimExtraTrailingSpace(lines []string) []string {
+	content := []string{}
+
+	for _, line := range lines {
+		content = append(content, strings.TrimRight(line, " \t"))
 	}
 
 	return content
