@@ -223,7 +223,7 @@ func TestRunCommand(t *testing.T) {
 			[]string{"hello world !", "hello universe !"},
 			func(lines []string, err error) {
 				assert.Equal(t, []string{}, lines)
-				assert.EqualError(t, err, "sh: catttttt: command not found")
+				assert.Regexp(t, ".*catttttt.*not found.*", err.Error())
 			},
 		},
 	}
