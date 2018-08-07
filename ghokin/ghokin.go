@@ -67,16 +67,16 @@ func transform(section *section, indentConf indent, commands commands) (bytes.Bu
 
 		switch sec.kind {
 		case gherkin.TokenType_FeatureLine, gherkin.TokenType_BackgroundLine, gherkin.TokenType_ScenarioLine, gherkin.TokenType_ExamplesLine:
-			lines = extractKeywordAndTextSeparatedWithAColon(sec.values[0])
+			lines = extractKeywordAndTextSeparatedWithAColon(sec.values)
 		case gherkin.TokenType_Comment:
-			cmd = extractCommand(sec.values[0], commands)
+			cmd = extractCommand(sec.values, commands)
 			lines = trimLinesSpace(extractTokensText(sec.values))
 			padding = getTagOrCommentPadding(paddings, sec)
 		case gherkin.TokenType_TagLine:
 			lines = extractTokensItemsText(sec.values)
 			padding = getTagOrCommentPadding(paddings, sec)
 		case gherkin.TokenType_DocStringSeparator, gherkin.TokenType_RuleLine:
-			lines = extractKeyword(sec.values[0])
+			lines = extractKeyword(sec.values)
 		case gherkin.TokenType_Other:
 			lines = extractTokensText(sec.values)
 
@@ -216,12 +216,12 @@ func extractTokensKeywordAndText(tokens []*gherkin.Token) []string {
 	return content
 }
 
-func extractKeywordAndTextSeparatedWithAColon(token *gherkin.Token) []string {
-	return []string{fmt.Sprintf("%s: %s", token.Keyword, token.Text)}
+func extractKeywordAndTextSeparatedWithAColon(tokens []*gherkin.Token) []string {
+	return []string{fmt.Sprintf("%s: %s", tokens[0].Keyword, tokens[0].Text)}
 }
 
-func extractKeyword(token *gherkin.Token) []string {
-	return []string{token.Keyword}
+func extractKeyword(tokens []*gherkin.Token) []string {
+	return []string{tokens[0].Keyword}
 }
 
 func extractTableRows(tokens []*gherkin.Token) []string {
@@ -276,9 +276,9 @@ func calculateLonguestLineLengthPerRow(rows [][]string) []int {
 	return lengths
 }
 
-func extractCommand(token *gherkin.Token, commands map[string]string) *exec.Cmd {
+func extractCommand(tokens []*gherkin.Token, commands map[string]string) *exec.Cmd {
 	re := regexp.MustCompile(`(\@[a-zA-Z0-9]+)`)
-	matches := re.FindStringSubmatch(token.Text)
+	matches := re.FindStringSubmatch(tokens[0].Text)
 
 	if len(matches) == 0 {
 		return nil

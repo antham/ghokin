@@ -75,17 +75,17 @@ func TestExtractTokensKeywordAndText(t *testing.T) {
 }
 
 func TestExtractKeywordAndTextSeparatedWithAColon(t *testing.T) {
-	token := &gherkin.Token{Keyword: "Feature", Text: "Set api"}
+	tokens := []*gherkin.Token{{Keyword: "Feature", Text: "Set api"}}
 	expected := []string{"Feature: Set api"}
 
-	assert.Equal(t, expected, extractKeywordAndTextSeparatedWithAColon(token))
+	assert.Equal(t, expected, extractKeywordAndTextSeparatedWithAColon(tokens))
 }
 
 func TestExtractKeyword(t *testing.T) {
-	token := &gherkin.Token{Keyword: `"""`}
+	tokens := []*gherkin.Token{{Keyword: `"""`}}
 	expected := []string{`"""`}
 
-	assert.Equal(t, expected, extractKeyword(token))
+	assert.Equal(t, expected, extractKeyword(tokens))
 }
 
 func TestExtractTableRows(t *testing.T) {
@@ -134,8 +134,8 @@ func TestExtractTableRows(t *testing.T) {
 
 func TestExtractCommand(t *testing.T) {
 	type scenario struct {
-		token *gherkin.Token
-		test  func(*exec.Cmd)
+		tokens []*gherkin.Token
+		test   func(*exec.Cmd)
 	}
 
 	commands := map[string]string{
@@ -145,25 +145,25 @@ func TestExtractCommand(t *testing.T) {
 
 	scenarios := []scenario{
 		{
-			&gherkin.Token{
+			[]*gherkin.Token{{
 				Text: "",
-			},
+			}},
 			func(cmd *exec.Cmd) {
 				assert.Nil(t, cmd)
 			},
 		},
 		{
-			&gherkin.Token{
+			[]*gherkin.Token{{
 				Text: "# A comment",
-			},
+			}},
 			func(cmd *exec.Cmd) {
 				assert.Nil(t, cmd)
 			},
 		},
 		{
-			&gherkin.Token{
+			[]*gherkin.Token{{
 				Text: "# @jq",
-			},
+			}},
 			func(cmd *exec.Cmd) {
 				expected := exec.Command("sh", "-c", "jq")
 
@@ -173,7 +173,7 @@ func TestExtractCommand(t *testing.T) {
 	}
 
 	for _, scenario := range scenarios {
-		scenario.test(extractCommand(scenario.token, commands))
+		scenario.test(extractCommand(scenario.tokens, commands))
 	}
 }
 
