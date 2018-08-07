@@ -61,83 +61,47 @@ func transform(section *section, indentConf indent, commands commands) (bytes.Bu
 	document := []string{}
 
 	for sec := section; sec != nil; sec = sec.nex {
+		var err error
 		var lines []string
+		padding = paddings[sec.kind]
 
 		switch sec.kind {
-		case gherkin.TokenType_FeatureLine:
+		case gherkin.TokenType_FeatureLine, gherkin.TokenType_BackgroundLine, gherkin.TokenType_ScenarioLine, gherkin.TokenType_ExamplesLine:
 			lines = extractKeywordAndTextSeparatedWithAColon(sec.values[0])
-			padding = paddings[sec.kind]
-		case gherkin.TokenType_BackgroundLine, gherkin.TokenType_ScenarioLine:
-			lines = extractKeywordAndTextSeparatedWithAColon(sec.values[0])
-			padding = paddings[sec.kind]
 		case gherkin.TokenType_Comment:
-			var nt gherkin.TokenType
-			excluded := []gherkin.TokenType{gherkin.TokenType_Empty, gherkin.TokenType_TagLine, gherkin.TokenType_Comment}
-
-			if sec.next(excluded) != nil {
-				nt = sec.next(excluded).kind
-			}
-
-			if nt == 0 && sec.previous(excluded) != nil {
-				nt = sec.previous(excluded).kind
-			}
-
 			cmd = extractCommand(sec.values[0], commands)
 			lines = trimLinesSpace(extractTokensText(sec.values))
-			padding = paddings[nt]
+			padding = getTagOrCommentPadding(paddings, sec)
 		case gherkin.TokenType_TagLine:
-			var nt gherkin.TokenType
-			excluded := []gherkin.TokenType{gherkin.TokenType_Empty, gherkin.TokenType_TagLine, gherkin.TokenType_Comment}
-
-			if sec.next(excluded) != nil {
-				nt = sec.next(excluded).kind
-			}
-
-			if nt == 0 && sec.previous(excluded) != nil {
-				nt = sec.previous(excluded).kind
-			}
-
 			lines = extractTokensItemsText(sec.values)
-			padding = paddings[nt]
+			padding = getTagOrCommentPadding(paddings, sec)
 		case gherkin.TokenType_DocStringSeparator, gherkin.TokenType_RuleLine:
 			lines = extractKeyword(sec.values[0])
-			padding = paddings[sec.kind]
 		case gherkin.TokenType_Other:
 			lines = extractTokensText(sec.values)
-			excluded := []gherkin.TokenType{gherkin.TokenType_Empty}
 
-			if sec.previous(excluded) != nil && sec.previous(excluded).kind == gherkin.TokenType_FeatureLine {
+			if isDescriptionFeature(sec) {
 				lines = trimLinesSpace(lines)
 			}
-
-			padding = paddings[sec.kind]
 		case gherkin.TokenType_StepLine:
 			lines = extractTokensKeywordAndText(sec.values)
-			padding = paddings[sec.kind]
-		case gherkin.TokenType_ExamplesLine:
-			lines = extractKeywordAndTextSeparatedWithAColon(sec.values[0])
-			padding = paddings[sec.kind]
 		case gherkin.TokenType_TableRow:
 			lines = extractTableRows(sec.values)
-			padding = paddings[sec.kind]
 		case gherkin.TokenType_Empty:
 			lines = extractTokensItemsText(sec.values)
 		}
 
-		if sec.kind != gherkin.TokenType_Comment && sec.kind != gherkin.TokenType_DocStringSeparator && cmd != nil {
-			l, err := runCommand(cmd, lines)
-
-			if err != nil {
-				return bytes.Buffer{}, err
-			}
-
-			lines = l
-			cmd = nil
+		if cmd, lines, err = computeCommand(cmd, lines, sec); err != nil {
+			return bytes.Buffer{}, err
 		}
 
 		document = append(document, trimExtraTrailingSpace(indentStrings(padding, lines))...)
 	}
 
+	return buildBuffer(document)
+}
+
+func buildBuffer(document []string) (bytes.Buffer, error) {
 	var buf bytes.Buffer
 
 	if _, err := buf.WriteString(strings.Join(document, "\n")); err != nil {
@@ -145,6 +109,45 @@ func transform(section *section, indentConf indent, commands commands) (bytes.Bu
 	}
 
 	return buf, nil
+}
+
+func getTagOrCommentPadding(paddings map[gherkin.TokenType]int, sec *section) int {
+	var kind gherkin.TokenType
+	excluded := []gherkin.TokenType{gherkin.TokenType_Empty, gherkin.TokenType_TagLine, gherkin.TokenType_Comment}
+
+	if sec.next(excluded) != nil {
+		kind = sec.next(excluded).kind
+	}
+
+	if kind == 0 && sec.previous(excluded) != nil {
+		kind = sec.previous(excluded).kind
+	}
+
+	return paddings[kind]
+}
+
+func computeCommand(cmd *exec.Cmd, lines []string, sec *section) (*exec.Cmd, []string, error) {
+	if sec.kind == gherkin.TokenType_Comment || sec.kind == gherkin.TokenType_DocStringSeparator || cmd == nil {
+		return nil, lines, nil
+	}
+
+	l, err := runCommand(cmd, lines)
+
+	if err != nil {
+		return nil, []string{}, err
+	}
+
+	return nil, l, err
+}
+
+func isDescriptionFeature(sec *section) bool {
+	excluded := []gherkin.TokenType{gherkin.TokenType_Empty}
+
+	if sec.previous(excluded) != nil && sec.previous(excluded).kind == gherkin.TokenType_FeatureLine {
+		return true
+	}
+
+	return false
 }
 
 func trimLinesSpace(lines []string) []string {
