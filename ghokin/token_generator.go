@@ -42,9 +42,19 @@ type section struct {
 	nex    *section
 }
 
-func (s *section) previous() *section {
+func (s *section) isExcluded(kind gherkin.TokenType, excluded []gherkin.TokenType) bool {
+	for _, e := range excluded {
+		if kind == e {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (s *section) previous(excluded []gherkin.TokenType) *section {
 	for sec := s.prev; sec != nil; sec = sec.prev {
-		if sec.kind != gherkin.TokenType_Empty {
+		if !s.isExcluded(sec.kind, excluded) {
 			return sec
 		}
 	}
@@ -52,9 +62,9 @@ func (s *section) previous() *section {
 	return nil
 }
 
-func (s *section) next() *section {
+func (s *section) next(excluded []gherkin.TokenType) *section {
 	for sec := s.nex; sec != nil; sec = sec.nex {
-		if sec.kind != gherkin.TokenType_Empty {
+		if !s.isExcluded(sec.kind, excluded) {
 			return sec
 		}
 	}

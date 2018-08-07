@@ -373,16 +373,16 @@ func TestExtractSections(t *testing.T) {
 					},
 				}
 
-				sec = sec.next()
+				sec = sec.next([]gherkin.TokenType{gherkin.TokenType_Empty})
 
 				for i := 0; i < len(ts); i++ {
-					assert.Equal(t, sec.previous().kind.Name(), ts[i].previousName)
+					assert.Equal(t, sec.previous([]gherkin.TokenType{gherkin.TokenType_Empty}).kind.Name(), ts[i].previousName)
 					assert.Equal(t, sec.kind.Name(), ts[i].currentName)
 
 					if i == len(ts)-1 {
-						assert.Equal(t, sec.next(), (*section)(nil))
+						assert.Equal(t, sec.next([]gherkin.TokenType{gherkin.TokenType_Empty}), (*section)(nil))
 					} else {
-						assert.Equal(t, sec.next().kind.Name(), ts[i].nextName)
+						assert.Equal(t, sec.next([]gherkin.TokenType{gherkin.TokenType_Empty}).kind.Name(), ts[i].nextName)
 					}
 
 					for j, v := range sec.values {
@@ -390,7 +390,7 @@ func TestExtractSections(t *testing.T) {
 						assert.Equal(t, ts[i].values[j]["text"], v.Text)
 					}
 
-					sec = sec.next()
+					sec = sec.next([]gherkin.TokenType{gherkin.TokenType_Empty})
 				}
 			},
 		},
