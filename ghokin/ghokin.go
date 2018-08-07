@@ -273,7 +273,7 @@ func calculateLonguestLineLengthPerRow(rows [][]string) []int {
 }
 
 func extractCommand(token *gherkin.Token, commands map[string]string) *exec.Cmd {
-	re := regexp.MustCompile("(\\@[a-zA-Z0-9]+)")
+	re := regexp.MustCompile(`(\@[a-zA-Z0-9]+)`)
 	matches := re.FindStringSubmatch(token.Text)
 
 	if len(matches) == 0 {
