@@ -24,6 +24,7 @@ func (e CmdErr) Error() string {
 }
 
 func extractSections(filename string) (*section, error) {
+	/* nosec */
 	file, err := os.Open(filename)
 
 	if err != nil {
@@ -280,6 +281,7 @@ func extractCommand(token *gherkin.Token, commands map[string]string) *exec.Cmd 
 		return nil
 	}
 
+	/* nosec */
 	if cmd, ok := commands[matches[0][1:]]; ok {
 		return exec.Command("sh", "-c", cmd)
 	}
