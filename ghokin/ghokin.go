@@ -56,39 +56,46 @@ func transform(section *section, indentConf indent, commands commands) (bytes.Bu
 		gherkin.TokenType_TableRow:           indentConf.tableAndDocString,
 	}
 
-	var padding int
+	formats := map[gherkin.TokenType](func(values []*gherkin.Token) []string){
+		gherkin.TokenType_FeatureLine:        extractKeywordAndTextSeparatedWithAColon,
+		gherkin.TokenType_BackgroundLine:     extractKeywordAndTextSeparatedWithAColon,
+		gherkin.TokenType_ScenarioLine:       extractKeywordAndTextSeparatedWithAColon,
+		gherkin.TokenType_ExamplesLine:       extractKeywordAndTextSeparatedWithAColon,
+		gherkin.TokenType_Comment:            extractTokensText,
+		gherkin.TokenType_TagLine:            extractTokensItemsText,
+		gherkin.TokenType_DocStringSeparator: extractKeyword,
+		gherkin.TokenType_RuleLine:           extractKeyword,
+		gherkin.TokenType_Other:              extractTokensText,
+		gherkin.TokenType_StepLine:           extractTokensKeywordAndText,
+		gherkin.TokenType_TableRow:           extractTableRows,
+		gherkin.TokenType_Empty:              extractTokensItemsText,
+	}
+
 	var cmd *exec.Cmd
 	document := []string{}
 
 	for sec := section; sec != nil; sec = sec.nex {
+		if sec.kind == 0 {
+			continue
+		}
+
 		var err error
-		var lines []string
-		padding = paddings[sec.kind]
+		padding := paddings[sec.kind]
+		lines := formats[sec.kind](sec.values)
 
 		switch sec.kind {
-		case gherkin.TokenType_FeatureLine, gherkin.TokenType_BackgroundLine, gherkin.TokenType_ScenarioLine, gherkin.TokenType_ExamplesLine:
-			lines = extractKeywordAndTextSeparatedWithAColon(sec.values)
 		case gherkin.TokenType_Comment:
 			cmd = extractCommand(sec.values, commands)
-			lines = trimLinesSpace(extractTokensText(sec.values))
 			padding = getTagOrCommentPadding(paddings, sec)
+			lines = trimLinesSpace(lines)
 		case gherkin.TokenType_TagLine:
-			lines = extractTokensItemsText(sec.values)
 			padding = getTagOrCommentPadding(paddings, sec)
 		case gherkin.TokenType_DocStringSeparator, gherkin.TokenType_RuleLine:
 			lines = extractKeyword(sec.values)
 		case gherkin.TokenType_Other:
-			lines = extractTokensText(sec.values)
-
 			if isDescriptionFeature(sec) {
 				lines = trimLinesSpace(lines)
 			}
-		case gherkin.TokenType_StepLine:
-			lines = extractTokensKeywordAndText(sec.values)
-		case gherkin.TokenType_TableRow:
-			lines = extractTableRows(sec.values)
-		case gherkin.TokenType_Empty:
-			lines = extractTokensItemsText(sec.values)
 		}
 
 		if cmd, lines, err = computeCommand(cmd, lines, sec); err != nil {
