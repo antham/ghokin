@@ -98,8 +98,14 @@ func transform(section *section, indentConf indent, commands commands) (bytes.Bu
 			}
 		}
 
-		if cmd, lines, err = computeCommand(cmd, lines, sec); err != nil {
+		computed, lines, err := computeCommand(cmd, lines, sec)
+
+		if err != nil {
 			return bytes.Buffer{}, err
+		}
+
+		if computed {
+			cmd = nil
 		}
 
 		document = append(document, trimExtraTrailingSpace(indentStrings(padding, lines))...)
@@ -133,18 +139,18 @@ func getTagOrCommentPadding(paddings map[gherkin.TokenType]int, sec *section) in
 	return paddings[kind]
 }
 
-func computeCommand(cmd *exec.Cmd, lines []string, sec *section) (*exec.Cmd, []string, error) {
+func computeCommand(cmd *exec.Cmd, lines []string, sec *section) (bool, []string, error) {
 	if sec.kind == gherkin.TokenType_Comment || sec.kind == gherkin.TokenType_DocStringSeparator || cmd == nil {
-		return nil, lines, nil
+		return false, lines, nil
 	}
 
 	l, err := runCommand(cmd, lines)
 
 	if err != nil {
-		return nil, []string{}, err
+		return true, []string{}, err
 	}
 
-	return nil, l, err
+	return true, l, err
 }
 
 func isDescriptionFeature(sec *section) bool {
