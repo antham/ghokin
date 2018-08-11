@@ -31,7 +31,7 @@ func NewFileManager(backgroundAndScenarioIndent int, stepIndent int, tableAndDoc
 	}
 }
 
-// Transform formats and apply shell commands on feature file
+// Transform formats and applies shell commands on feature file
 func (f FileManager) Transform(filename string) (bytes.Buffer, error) {
 	section, err := extractSections(filename)
 
