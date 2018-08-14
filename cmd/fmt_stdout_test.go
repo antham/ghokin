@@ -71,25 +71,45 @@ func TestFormatOnStdoutWithErrors(t *testing.T) {
 		&stderr,
 	}
 
-	w.Add(1)
+	type scenario struct {
+		args   []string
+		errMsg string
+	}
 
-	go func() {
-		defer func() {
-			if r := recover(); r != nil {
-				code = r.(int)
-			}
+	scenarios := []scenario{
+		{
+			[]string{},
+			"you must provide a filename as argument\n",
+		},
+		{
+			[]string{"fixtures/featurefeature.feature"},
+			"open fixtures/featurefeature.feature: no such file or directory\n",
+		},
+	}
 
-			w.Done()
+	for _, s := range scenarios {
+		w.Add(1)
+
+		go func() {
+			defer func() {
+				if r := recover(); r != nil {
+					code = r.(int)
+				}
+
+				w.Done()
+			}()
+
+			cmd := &cobra.Command{}
+
+			formatOnStdout(msgHandler, cmd, s.args)
 		}()
 
-		cmd := &cobra.Command{}
-		args := []string{"fixtures/featurefeature.feature"}
+		w.Wait()
 
-		formatOnStdout(msgHandler, cmd, args)
-	}()
+		assert.EqualValues(t, 1, code, "Must exit with errors (exit 1)")
+		assert.EqualValues(t, s.errMsg, stderr.String())
 
-	w.Wait()
-
-	assert.EqualValues(t, 1, code, "Must exit with errors (exit 1)")
-	assert.EqualValues(t, "open fixtures/featurefeature.feature: no such file or directory\n", stderr.String())
+		stderr.Reset()
+		stdout.Reset()
+	}
 }
