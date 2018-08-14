@@ -69,6 +69,7 @@ func transform(section *section, indentConf indent, aliases aliases) (bytes.Buff
 		gherkin.TokenType_StepLine:           extractTokensKeywordAndText,
 		gherkin.TokenType_TableRow:           extractTableRows,
 		gherkin.TokenType_Empty:              extractTokensItemsText,
+		gherkin.TokenType_Language:           extractLanguage,
 	}
 
 	var cmd *exec.Cmd
@@ -84,7 +85,7 @@ func transform(section *section, indentConf indent, aliases aliases) (bytes.Buff
 		lines := formats[sec.kind](sec.values)
 
 		switch sec.kind {
-		case gherkin.TokenType_Comment:
+		case gherkin.TokenType_Comment, gherkin.TokenType_Language:
 			cmd = extractCommand(sec.values, aliases)
 			padding = getTagOrCommentPadding(paddings, sec)
 			lines = trimLinesSpace(lines)
@@ -191,6 +192,10 @@ func indentStrings(padding int, lines []string) []string {
 	}
 
 	return content
+}
+
+func extractLanguage(tokens []*gherkin.Token) []string {
+	return []string{fmt.Sprintf("# language: %s", tokens[0].Text)}
 }
 
 func extractTokensText(tokens []*gherkin.Token) []string {

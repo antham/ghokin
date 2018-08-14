@@ -1,4 +1,5 @@
 @tag1 @tag2
+# language: en
 Feature: A Feature
       Description
       Description
