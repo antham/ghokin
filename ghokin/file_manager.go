@@ -80,12 +80,15 @@ func (f FileManager) replaceFolderWithContent(path string, extensions []string) 
 	fc := make(chan string)
 	wg := sync.WaitGroup{}
 	var mu sync.Mutex
-	defer mu.Unlock()
 
 	files, err := findFeatureFiles(path, extensions)
 
 	if err != nil {
 		return []error{err}
+	}
+
+	if len(files) == 0 {
+		return []error{}
 	}
 
 	for i := 0; i < 10; i++ {
@@ -120,6 +123,7 @@ func (f FileManager) replaceFolderWithContent(path string, extensions []string) 
 	close(fc)
 	wg.Wait()
 	mu.Lock()
+	defer mu.Unlock()
 
 	return errors
 }

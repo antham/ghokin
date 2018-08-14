@@ -266,6 +266,19 @@ hello world
 				}
 			},
 		},
+		{
+			"/tmp/ghokin",
+			[]string{"feature"},
+			func() {
+				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
+				assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/file1.txt", []byte("file1"), 0777))
+				assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/file2.txt", []byte("file2"), 0777))
+			},
+			func(errs []error) {
+				assert.Len(t, errs, 0)
+			},
+		},
 	}
 
 	for _, scenario := range scenarios {
