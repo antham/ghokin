@@ -12,7 +12,7 @@ var fmtCmd = &cobra.Command{
 
 func format(msgHandler messageHandler, cmd *cobra.Command, args []string) {
 	if err := cmd.Help(); err != nil {
-		newMessageHandler().errorFatal(err)
+		msgHandler.errorFatal(err)
 	}
 }
 
