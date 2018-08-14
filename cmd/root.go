@@ -62,12 +62,12 @@ func initConfig(msgHandler messageHandler) func() {
 		viper.SetDefault("indent.step", 4)
 		viper.SetDefault("indent.tableAndDocString", 6)
 
-		commands := map[string]string{}
-		if err := json.Unmarshal([]byte(viper.GetString("commands")), &commands); viper.IsSet("commands") && err != nil {
-			msgHandler.errorFatalStr("check commands is a well-formed JSON : " + err.Error())
+		aliases := map[string]string{}
+		if err := json.Unmarshal([]byte(viper.GetString("aliases")), &aliases); viper.IsSet("aliases") && err != nil {
+			msgHandler.errorFatalStr("check aliases is a well-formed JSON : " + err.Error())
 		}
 
-		viper.SetDefault("commands", commands)
+		viper.SetDefault("aliases", aliases)
 
 		if err := viper.ReadInConfig(); err != nil {
 			switch err.(type) {

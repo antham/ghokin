@@ -43,7 +43,7 @@ func extractSections(filename string) (*section, error) {
 	return section, parser.Parse(scanner, matcher)
 }
 
-func transform(section *section, indentConf indent, commands commands) (bytes.Buffer, error) {
+func transform(section *section, indentConf indent, aliases aliases) (bytes.Buffer, error) {
 	paddings := map[gherkin.TokenType]int{
 		gherkin.TokenType_FeatureLine:        0,
 		gherkin.TokenType_BackgroundLine:     indentConf.backgroundAndScenario,
@@ -85,7 +85,7 @@ func transform(section *section, indentConf indent, commands commands) (bytes.Bu
 
 		switch sec.kind {
 		case gherkin.TokenType_Comment:
-			cmd = extractCommand(sec.values, commands)
+			cmd = extractCommand(sec.values, aliases)
 			padding = getTagOrCommentPadding(paddings, sec)
 			lines = trimLinesSpace(lines)
 		case gherkin.TokenType_TagLine:
@@ -289,7 +289,7 @@ func calculateLonguestLineLengthPerRow(rows [][]string) []int {
 	return lengths
 }
 
-func extractCommand(tokens []*gherkin.Token, commands map[string]string) *exec.Cmd {
+func extractCommand(tokens []*gherkin.Token, aliases map[string]string) *exec.Cmd {
 	re := regexp.MustCompile(`(\@[a-zA-Z0-9]+)`)
 	matches := re.FindStringSubmatch(tokens[0].Text)
 
@@ -298,7 +298,7 @@ func extractCommand(tokens []*gherkin.Token, commands map[string]string) *exec.C
 	}
 
 	/* #nosec */
-	if cmd, ok := commands[matches[0][1:]]; ok {
+	if cmd, ok := aliases[matches[0][1:]]; ok {
 		return exec.Command("sh", "-c", cmd)
 	}
 

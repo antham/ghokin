@@ -138,7 +138,7 @@ func TestExtractCommand(t *testing.T) {
 		test   func(*exec.Cmd)
 	}
 
-	commands := map[string]string{
+	aliases := map[string]string{
 		"cat": "cat",
 		"jq":  "jq",
 	}
@@ -173,7 +173,7 @@ func TestExtractCommand(t *testing.T) {
 	}
 
 	for _, scenario := range scenarios {
-		scenario.test(extractCommand(scenario.tokens, commands))
+		scenario.test(extractCommand(scenario.tokens, aliases))
 	}
 }
 
@@ -440,10 +440,10 @@ func TestTransform(t *testing.T) {
 
 		assert.NoError(t, err)
 
-		commands := map[string]string{
+		aliases := map[string]string{
 			"seq": "seq 1 3",
 		}
 
-		scenario.test(transform(s, indent{2, 4, 6}, commands))
+		scenario.test(transform(s, indent{2, 4, 6}, aliases))
 	}
 }

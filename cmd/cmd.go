@@ -19,6 +19,6 @@ func getFileManager() ghokin.FileManager {
 		viper.GetInt("indent.backgroundAndScenario"),
 		viper.GetInt("indent.step"),
 		viper.GetInt("indent.tableAndDocString"),
-		viper.GetStringMapString("commands"),
+		viper.GetStringMapString("aliases"),
 	)
 }

@@ -9,7 +9,7 @@ import (
 	"sync"
 )
 
-type commands map[string]string
+type aliases map[string]string
 
 type indent struct {
 	backgroundAndScenario int
@@ -20,19 +20,19 @@ type indent struct {
 // FileManager handles transformation on feature files
 type FileManager struct {
 	indentConf indent
-	commands   commands
+	aliases    aliases
 }
 
-// NewFileManager creates a brand new FileManager, it requires indentation values and commands defined
+// NewFileManager creates a brand new FileManager, it requires indentation values and aliases defined
 // as a shell commands in comments
-func NewFileManager(backgroundAndScenarioIndent int, stepIndent int, tableAndDocStringIndent int, commands map[string]string) FileManager {
+func NewFileManager(backgroundAndScenarioIndent int, stepIndent int, tableAndDocStringIndent int, aliases map[string]string) FileManager {
 	return FileManager{
 		indent{
 			backgroundAndScenarioIndent,
 			stepIndent,
 			tableAndDocStringIndent,
 		},
-		commands,
+		aliases,
 	}
 }
 
@@ -44,7 +44,7 @@ func (f FileManager) Transform(filename string) (bytes.Buffer, error) {
 		return bytes.Buffer{}, err
 	}
 
-	return transform(section, f.indentConf, f.commands)
+	return transform(section, f.indentConf, f.aliases)
 }
 
 // TransformAndReplace formats and applies shell commands on file or folders
