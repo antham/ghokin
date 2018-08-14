@@ -14,7 +14,7 @@ var fmtReplaceCmd = &cobra.Command{
 
 func formatAndReplace(msgHandler messageHandler, cmd *cobra.Command, args []string) {
 	if len(args) != 1 {
-		msgHandler.errorFatalStr("you must provide a filename or a folder")
+		msgHandler.errorFatalStr("you must provide a filename or a folder as argument")
 	}
 
 	if errs := getFileManager().TransformAndReplace(args[0], extensions); len(errs) > 0 {
