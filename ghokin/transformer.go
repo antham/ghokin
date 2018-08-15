@@ -281,12 +281,13 @@ func calculateLonguestLineLengthPerColumn(rows [][]string) []int {
 
 	for i, row := range rows {
 		for j, str := range row {
-			if i == 0 {
+			switch true {
+			case i == 0:
 				lengths = append(lengths, len(str))
-			}
-
-			if i != 0 && lengths[j] < len(str) {
+			case i != 0 && len(lengths) > j && lengths[j] < len(str):
 				lengths[j] = len(str)
+			default:
+				lengths = append(lengths, 0)
 			}
 		}
 	}
