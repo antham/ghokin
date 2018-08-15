@@ -239,7 +239,13 @@ func extractKeywordAndTextSeparatedWithAColon(tokens []*gherkin.Token) []string 
 }
 
 func extractKeyword(tokens []*gherkin.Token) []string {
-	return []string{tokens[0].Keyword}
+	content := []string{}
+
+	for _, t := range tokens {
+		content = append(content, t.Keyword)
+	}
+
+	return content
 }
 
 func extractTableRows(tokens []*gherkin.Token) []string {

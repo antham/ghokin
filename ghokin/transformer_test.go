@@ -444,6 +444,17 @@ func TestTransform(t *testing.T) {
 				assert.EqualValues(t, string(b[:len(b)-1]), buf.String())
 			},
 		},
+		{
+			"fixtures/docstring-empty.input.feature",
+			func(buf bytes.Buffer, err error) {
+				assert.NoError(t, err)
+
+				b, e := ioutil.ReadFile("fixtures/docstring-empty.expected.feature")
+
+				assert.NoError(t, e)
+				assert.EqualValues(t, string(b[:len(b)-1]), buf.String())
+			},
+		},
 	}
 
 	for _, scenario := range scenarios {
