@@ -6,8 +6,8 @@ Ghokin format and apply transformation on gherkin files.
 ---
 
 * [Usage](#usage)
-* [Setup](#setup)
 * [Documentation](#documentation)
+* [Setup](#setup)
 * [Contribute](#contribute)
 
 ---
@@ -103,7 +103,7 @@ export GHOKIN_ALIASES='{"json":"jq"}'
 
 ## Setup
 
-Download from release page according to your architecture chyle binary : https://github.com/antham/ghokin/releases
+Download from release page according to your architecture ghokin binary : https://github.com/antham/ghokin/releases
 
 ## Contribute
 
