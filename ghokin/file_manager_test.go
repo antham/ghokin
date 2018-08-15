@@ -288,6 +288,15 @@ hello world
 				assert.EqualError(t, errs[0], "Parser errors:\n(1:1): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'whatever'")
 			},
 		},
+		{
+			"whatever/whatever",
+			[]string{"feature"},
+			func() {},
+			func(errs []error) {
+				assert.Len(t, errs, 1)
+				assert.EqualError(t, errs[0], "stat whatever/whatever: no such file or directory")
+			},
+		},
 	}
 
 	for _, scenario := range scenarios {
