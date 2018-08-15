@@ -257,7 +257,7 @@ func extractTableRows(tokens []*gherkin.Token) []string {
 
 	var tableRows []string
 
-	lengths := calculateLonguestLineLengthPerRow(rows)
+	lengths := calculateLonguestLineLengthPerColumn(rows)
 
 	for _, row := range rows {
 		inputs := []interface{}{}
@@ -276,7 +276,7 @@ func extractTableRows(tokens []*gherkin.Token) []string {
 	return tableRows
 }
 
-func calculateLonguestLineLengthPerRow(rows [][]string) []int {
+func calculateLonguestLineLengthPerColumn(rows [][]string) []int {
 	lengths := []int{}
 
 	for i, row := range rows {
