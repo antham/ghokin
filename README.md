@@ -58,7 +58,7 @@ ghokin fmt replace features/
 ### Shell commands
 
 You can run shell commands from within your feature file to transform some datas with annotations, to do so you need first to define in the config an alias and afterwards you can simply "comment" the line before the line you want to transform with that alias.
-For instancen let say ```@json``` calls behind the curtain ```jq```, we could validate and format some json in our feature like so :
+For instance let say ```@json``` calls behind the curtain ```jq```, we could validate and format some json in our feature like so :
 
 ```
 Feature: A Feature
