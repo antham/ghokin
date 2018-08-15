@@ -279,6 +279,15 @@ hello world
 				assert.Len(t, errs, 0)
 			},
 		},
+		{
+			"fixtures/file.txt",
+			[]string{"txt"},
+			func() {},
+			func(errs []error) {
+				assert.Len(t, errs, 1)
+				assert.EqualError(t, errs[0], "Parser errors:\n(1:1): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'whatever'")
+			},
+		},
 	}
 
 	for _, scenario := range scenarios {
