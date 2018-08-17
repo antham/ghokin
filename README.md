@@ -107,7 +107,7 @@ Download from release page according to your architecture ghokin binary : https:
 
 ## Contribute
 
-If you want to add a new feature to chyle project, the best way is to open a ticket first to know exactly how to implement your changes in code.
+If you want to add a new feature to ghokin project, the best way is to open a ticket first to know exactly how to implement your changes in code.
 
 ### Setup
 
