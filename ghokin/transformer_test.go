@@ -419,7 +419,7 @@ func TestTransform(t *testing.T) {
 				b, e := ioutil.ReadFile("fixtures/file1.feature")
 
 				assert.NoError(t, e)
-				assert.EqualValues(t, string(b[:len(b)-1]), buf.String())
+				assert.EqualValues(t, string(b), buf.String())
 			},
 		},
 		{
@@ -430,7 +430,7 @@ func TestTransform(t *testing.T) {
 				b, e := ioutil.ReadFile("fixtures/cmd.expected.feature")
 
 				assert.NoError(t, e)
-				assert.EqualValues(t, string(b[:len(b)-1]), buf.String())
+				assert.EqualValues(t, string(b), buf.String())
 			},
 		},
 		{
@@ -441,7 +441,7 @@ func TestTransform(t *testing.T) {
 				b, e := ioutil.ReadFile("fixtures/multisize-table.expected.feature")
 
 				assert.NoError(t, e)
-				assert.EqualValues(t, string(b[:len(b)-1]), buf.String())
+				assert.EqualValues(t, string(b), buf.String())
 			},
 		},
 		{
@@ -452,7 +452,7 @@ func TestTransform(t *testing.T) {
 				b, e := ioutil.ReadFile("fixtures/docstring-empty.expected.feature")
 
 				assert.NoError(t, e)
-				assert.EqualValues(t, string(b[:len(b)-1]), buf.String())
+				assert.EqualValues(t, string(b), buf.String())
 			},
 		},
 	}

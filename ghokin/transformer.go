@@ -118,7 +118,7 @@ func transform(section *section, indentConf indent, aliases aliases) (bytes.Buff
 func buildBuffer(document []string) (bytes.Buffer, error) {
 	var buf bytes.Buffer
 
-	if _, err := buf.WriteString(strings.Join(document, "\n")); err != nil {
+	if _, err := buf.WriteString(strings.Join(document, "\n") + "\n"); err != nil {
 		return bytes.Buffer{}, err
 	}
 
