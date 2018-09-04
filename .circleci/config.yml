@@ -9,19 +9,14 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Get doc-hunt binary
+          name: Install dependencies
           command: |
             mkdir /home/circleci/bin
             wget -O ~/bin/doc-hunt https://github.com/antham/doc-hunt/releases/download/v2.1.1/doc-hunt_linux_amd64 && chmod 777 ~/bin/doc-hunt
-      - run:
-          name: Get gommit binary
-          command: |
             wget -O ~/bin/gommit https://github.com/antham/gommit/releases/download/v2.1.1/gommit_linux_386 && chmod 777 ~/bin/gommit
-      - run:
-          name: Install dep and gometalinter
-          command: |
             go get -u github.com/golang/dep/cmd/dep
             go get github.com/alecthomas/gometalinter
+            go get -u github.com/mitchellh/gox
             gometalinter --install --update
       - run:
           name: Install vendors
@@ -35,6 +30,10 @@ jobs:
           name: Run tests
           command: |
             make run-tests
+      - run:
+          name: Compile
+          command: |
+            gox -output "build/{{.Dir}}_{{.OS}}_{{.Arch}}"
       - run:
           name: Run gommit
           command: |
