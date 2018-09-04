@@ -64,7 +64,8 @@ func TestFormatAndReplace(t *testing.T) {
 	b1Expected := `Feature: Test
       Test
   Scenario: Scenario1
-    Given a test`
+    Given a test
+`
 
 	assert.EqualValues(t, b1Expected, string(b1))
 
@@ -75,7 +76,8 @@ func TestFormatAndReplace(t *testing.T) {
 	b2Expected := `Feature: Test
       Test
   Scenario: Scenario2
-    Given a test`
+    Given a test
+`
 
 	assert.EqualValues(t, b2Expected, string(b2))
 }

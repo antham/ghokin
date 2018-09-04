@@ -21,7 +21,7 @@ func formatOnStdout(msgHandler messageHandler, cmd *cobra.Command, args []string
 		msgHandler.errorFatal(err)
 	}
 
-	msgHandler.print("%s\n", output.String())
+	msgHandler.print("%s", output.String())
 }
 
 func init() {

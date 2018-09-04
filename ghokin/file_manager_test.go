@@ -23,7 +23,7 @@ func TestFileManagerTransform(t *testing.T) {
 				b, e := ioutil.ReadFile("fixtures/file1.feature")
 
 				assert.NoError(t, e)
-				assert.EqualValues(t, string(b[:len(b)-1]), buf.String())
+				assert.EqualValues(t, string(b), buf.String())
 			},
 		},
 		{
@@ -84,7 +84,8 @@ hello world
     Then whatever
       """
       hello world
-      """`
+      """
+`
 
 				b, e := ioutil.ReadFile("/tmp/ghokin/file1.feature")
 
@@ -104,7 +105,8 @@ Scenario:   scenario%d
    Then      whatever
 """
 hello world
-"""`)
+"""
+`)
 
 				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
 				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
@@ -133,7 +135,8 @@ hello world
     Then whatever
       """
       hello world
-      """`
+      """
+`
 
 				for i, f := range []string{
 					"/tmp/ghokin/file1.feature",
@@ -162,7 +165,8 @@ Scenario:   scenario
    Then      whatever
 """
 hello world
-"""`)
+"""
+`)
 
 				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
 				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
@@ -210,7 +214,8 @@ Scenario:   scenario
    Then      whatever
 """
 hello world
-"""`)
+"""
+`)
 
 				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
 				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
@@ -230,7 +235,8 @@ hello world
     Then whatever
       """
       hello world
-      """`
+      """
+`
 
 				contentUnformatted := `Feature: test
    test
@@ -240,7 +246,8 @@ Scenario:   scenario
    Then      whatever
 """
 hello world
-"""`
+"""
+`
 
 				for _, s := range []struct {
 					filename string
