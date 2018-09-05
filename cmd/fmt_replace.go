@@ -7,7 +7,7 @@ import (
 var extensions []string
 
 var fmtReplaceCmd = &cobra.Command{
-	Use:   "replace",
+	Use:   "replace [file or folder path]",
 	Short: "Format and replace a file or a pool of files in folder",
 	Run:   setupCmdFunc(formatAndReplace),
 }
