@@ -5,7 +5,7 @@ import (
 )
 
 var fmtStdoutCmd = &cobra.Command{
-	Use:   "stdout",
+	Use:   "stdout [file path]",
 	Short: "Format a file and dump the result on stdout",
 	Run:   setupCmdFunc(formatOnStdout),
 }
