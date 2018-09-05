@@ -87,7 +87,7 @@ indent:
   tableAndDocString: 8
 
 aliases:
-  json: "jq"
+  json: "jq ."
 ```
 
 Aliases key defined [shell commands](#shell-commands) callable in comments as we discussed earlier.
@@ -98,7 +98,7 @@ It's possible to use environments variables instead of a static config file :
 export GHOKIN_INDENT_BACKGROUNDANDSCENARIO=4
 export GHOKIN_INDENT_STEP=6
 export GHOKIN_INDENT_TABLEANDDOCSTRING=8
-export GHOKIN_ALIASES='{"json":"jq"}'
+export GHOKIN_ALIASES='{"json":"jq ."}'
 ```
 
 ## Setup
