@@ -54,7 +54,7 @@ or
 ghokin fmt replace features/
 ```
 
-## check
+### check
 
 Ensure a file or all files in a directory are well formatted, exit with an error code otherwise
 
