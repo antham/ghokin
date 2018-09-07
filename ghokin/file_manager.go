@@ -3,11 +3,23 @@ package ghokin
 import (
 	"bytes"
 	"fmt"
+	"io/ioutil"
 	"os"
 	mpath "path"
 	"path/filepath"
 	"sync"
 )
+
+// ProcessFileError is emitted when processing a file trigger an error
+type ProcessFileError struct {
+	Message string
+	File    string
+}
+
+// Error dumps a string error
+func (p ProcessFileError) Error() string {
+	return fmt.Sprintf(`an error occurred with file "%s" : %s`, p.File, p.Message)
+}
 
 type aliases map[string]string
 
@@ -47,9 +59,18 @@ func (f FileManager) Transform(filename string) (bytes.Buffer, error) {
 	return transform(section, f.indentConf, f.aliases)
 }
 
-// TransformAndReplace formats and applies shell commands on file or folders
+// TransformAndReplace formats and applies shell commands on file or folder
 // and replace the content of files
 func (f FileManager) TransformAndReplace(path string, extensions []string) []error {
+	return f.process(path, extensions, replaceFileWithContent)
+}
+
+// Check ensures file or folder is well formatted
+func (f FileManager) Check(path string, extensions []string) []error {
+	return f.process(path, extensions, check)
+}
+
+func (f FileManager) process(path string, extensions []string, processFile func(file string, content []byte) error) []error {
 	errors := []error{}
 
 	fi, err := os.Stat(path)
@@ -59,7 +80,7 @@ func (f FileManager) TransformAndReplace(path string, extensions []string) []err
 
 	switch mode := fi.Mode(); {
 	case mode.IsDir():
-		errors = append(errors, f.replaceFolderWithContent(path, extensions)...)
+		errors = append(errors, f.processPath(path, extensions, processFile)...)
 	case mode.IsRegular():
 		b, err := f.Transform(path)
 
@@ -67,7 +88,7 @@ func (f FileManager) TransformAndReplace(path string, extensions []string) []err
 			return append(errors, err)
 		}
 
-		if err := replaceFileWithContent(path, b.Bytes()); err != nil {
+		if err := processFile(path, b.Bytes()); err != nil {
 			errors = append(errors, err)
 		}
 	}
@@ -75,7 +96,7 @@ func (f FileManager) TransformAndReplace(path string, extensions []string) []err
 	return errors
 }
 
-func (f FileManager) replaceFolderWithContent(path string, extensions []string) []error {
+func (f FileManager) processPath(path string, extensions []string, processFile func(file string, content []byte) error) []error {
 	errors := []error{}
 	fc := make(chan string)
 	wg := sync.WaitGroup{}
@@ -100,14 +121,14 @@ func (f FileManager) replaceFolderWithContent(path string, extensions []string) 
 
 				if err != nil {
 					mu.Lock()
-					errors = append(errors, fmt.Errorf(`An error occurred with file "%s" : %s`, file, err.Error()))
+					errors = append(errors, ProcessFileError{Message: err.Error(), File: file})
 					mu.Unlock()
 					continue
 				}
 
-				if err := replaceFileWithContent(file, b.Bytes()); err != nil {
+				if err := processFile(file, b.Bytes()); err != nil {
 					mu.Lock()
-					errors = append(errors, fmt.Errorf(`An error occurred with file "%s" : %s`, file, err.Error()))
+					errors = append(errors, err)
 					mu.Unlock()
 				}
 			}
@@ -128,16 +149,34 @@ func (f FileManager) replaceFolderWithContent(path string, extensions []string) 
 	return errors
 }
 
-func replaceFileWithContent(filename string, content []byte) error {
-	file, err := os.Create(filename)
+func replaceFileWithContent(file string, content []byte) error {
+	f, err := os.Create(file)
 
 	if err != nil {
-		return err
+		return ProcessFileError{Message: err.Error(), File: file}
 	}
 
-	_, err = file.Write(content)
+	_, err = f.Write(content)
 
-	return err
+	if err != nil {
+		return ProcessFileError{Message: err.Error(), File: file}
+	}
+
+	return nil
+}
+
+func check(file string, content []byte) error {
+	currentContent, err := ioutil.ReadFile(file) // #nosec
+
+	if err != nil {
+		return ProcessFileError{Message: err.Error(), File: file}
+	}
+
+	if !bytes.Equal(currentContent, content) {
+		return ProcessFileError{Message: "file is not properly formatted", File: file}
+	}
+
+	return nil
 }
 
 func findFeatureFiles(rootPath string, extensions []string) ([]string, error) {
