@@ -21,6 +21,7 @@ Usage:
   ghokin [command]
 
 Available Commands:
+  check       Check a file/folder is well formatted
   fmt         Format a feature file/folder
   help        Help about any command
 
@@ -51,6 +52,20 @@ or
 
 ```
 ghokin fmt replace features/
+```
+
+## check
+
+Ensure a file or all files in a directory are well formatted, exit with an error code otherwise
+
+```
+ghokin check features/test.feature
+```
+
+or
+
+```
+ghokin check features/
 ```
 
 ## Documentation
