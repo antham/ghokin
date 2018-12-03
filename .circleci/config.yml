@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/golang:1.10
+      - image: circleci/golang:1.11
     working_directory: /go/src/github.com/antham/ghokin
     environment:
        BASH_ENV: /home/circleci/.bashrc
@@ -10,21 +10,21 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - pkg-cache-{{ checksum "Gopkg.lock" }}-v1
+            - pkg-cache-{{ checksum "go.sum" }}-v1
       - run:
           name: Install dependencies
           command: |
             mkdir /home/circleci/bin
             wget -O ~/bin/doc-hunt https://github.com/antham/doc-hunt/releases/download/v2.1.1/doc-hunt_linux_amd64 && chmod 777 ~/bin/doc-hunt
             wget -O ~/bin/gommit https://github.com/antham/gommit/releases/download/v2.1.1/gommit_linux_386 && chmod 777 ~/bin/gommit
-            go get -u github.com/golang/dep/cmd/dep
             go get github.com/alecthomas/gometalinter
             go get -u github.com/mitchellh/gox
             gometalinter --install --update
       - run:
           name: Install vendors
           command: |
-            dep ensure -v
+            export GO111MODULE=on
+            go mod vendor
       - run:
           name: Run gometalinter
           command: |
@@ -49,7 +49,7 @@ jobs:
           command: |
             ~/bin/doc-hunt check -e
       - save_cache:
-          key: pkg-cache-{{ checksum "Gopkg.lock" }}-v1
+          key: pkg-cache-{{ checksum "go.sum" }}-v1
           paths:
             - ~/.cache/go-build
       - run:
@@ -73,13 +73,13 @@ jobs:
             mkdir /home/circleci/bin
             go get -u github.com/mitchellh/gox
             go get -u github.com/tcnksm/ghr
-            go get -u github.com/golang/dep/cmd/dep
             wget -O ~/bin/chyle https://github.com/antham/chyle/releases/download/v1.2.0/chyle_linux_amd64
             chmod 777 ~/bin/chyle
       - run:
           name: Install vendors
           command: |
-            dep ensure -v
+            export GO111MODULE=on
+            go mod vendor
       - run:
           name: Compile
           command: |
