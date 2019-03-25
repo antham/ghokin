@@ -17,18 +17,12 @@ jobs:
             mkdir /home/circleci/bin
             wget -O ~/bin/doc-hunt https://github.com/antham/doc-hunt/releases/download/v2.1.1/doc-hunt_linux_amd64 && chmod 777 ~/bin/doc-hunt
             wget -O ~/bin/gommit https://github.com/antham/gommit/releases/download/v2.1.1/gommit_linux_386 && chmod 777 ~/bin/gommit
-            go get github.com/alecthomas/gometalinter
             go get -u github.com/mitchellh/gox
-            gometalinter --install --update
       - run:
           name: Install vendors
           command: |
             export GO111MODULE=on
             go mod vendor
-      - run:
-          name: Run gometalinter
-          command: |
-            make gometalinter
       - run:
           name: Run tests
           command: |
