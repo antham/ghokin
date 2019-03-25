@@ -23,7 +23,7 @@ require (
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/jwalterweatherman v0.0.0-20180109140146-7c0cea34c8ec // indirect
 	github.com/spf13/pflag v1.0.1 // indirect
-	github.com/spf13/viper v1.0.2
+	github.com/spf13/viper v1.3.2
 	github.com/stretchr/testify v1.3.0
 	golang.org/x/sync v0.0.0-20181108010431-42b317875d0f // indirect
 	golang.org/x/sys v0.0.0-20180727230415-bd9dbc187b6e // indirect
