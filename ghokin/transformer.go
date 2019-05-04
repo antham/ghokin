@@ -23,14 +23,7 @@ func (e CmdErr) Error() string {
 	return e.output
 }
 
-func extractSections(filename string) (*section, error) {
-	/* #nosec */
-	file, err := os.Open(filename)
-
-	if err != nil {
-		return &section{}, err
-	}
-
+func extractSections(file *os.File) (*section, error) {
 	section := &section{}
 	builder := &tokenGenerator{section: section}
 
