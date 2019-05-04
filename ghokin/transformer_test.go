@@ -1,8 +1,8 @@
 package ghokin
 
 import (
-	"bytes"
 	"io/ioutil"
+	"os"
 	"os/exec"
 	"testing"
 
@@ -241,12 +241,6 @@ func TestExtractSections(t *testing.T) {
 
 	scenarios := []scenario{
 		{
-			"",
-			func(section *section, err error) {
-				assert.EqualError(t, err, "open : no such file or directory")
-			},
-		},
-		{
 			"fixtures/file.txt",
 			func(section *section, err error) {
 				assert.EqualError(t, err, "Parser errors:\n(1:1): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'whatever'")
@@ -400,72 +394,55 @@ func TestExtractSections(t *testing.T) {
 	}
 
 	for _, scenario := range scenarios {
-		scenario.test(extractSections(scenario.filename))
+		file, err := os.Open(scenario.filename)
+		assert.NoError(t, err)
+		scenario.test(extractSections(file))
 	}
 }
 
 func TestTransform(t *testing.T) {
 	type scenario struct {
-		filename string
-		test     func(bytes.Buffer, error)
+		input    string
+		expected string
 	}
 
 	scenarios := []scenario{
 		{
 			"fixtures/file1.feature",
-			func(buf bytes.Buffer, err error) {
-				assert.NoError(t, err)
-
-				b, e := ioutil.ReadFile("fixtures/file1.feature")
-
-				assert.NoError(t, e)
-				assert.EqualValues(t, string(b), buf.String())
-			},
+			"fixtures/file1.feature",
 		},
+
 		{
 			"fixtures/cmd.input.feature",
-			func(buf bytes.Buffer, err error) {
-				assert.NoError(t, err)
-
-				b, e := ioutil.ReadFile("fixtures/cmd.expected.feature")
-
-				assert.NoError(t, e)
-				assert.EqualValues(t, string(b), buf.String())
-			},
+			"fixtures/cmd.expected.feature",
 		},
 		{
 			"fixtures/multisize-table.input.feature",
-			func(buf bytes.Buffer, err error) {
-				assert.NoError(t, err)
-
-				b, e := ioutil.ReadFile("fixtures/multisize-table.expected.feature")
-
-				assert.NoError(t, e)
-				assert.EqualValues(t, string(b), buf.String())
-			},
+			"fixtures/multisize-table.expected.feature",
 		},
 		{
 			"fixtures/docstring-empty.input.feature",
-			func(buf bytes.Buffer, err error) {
-				assert.NoError(t, err)
-
-				b, e := ioutil.ReadFile("fixtures/docstring-empty.expected.feature")
-
-				assert.NoError(t, e)
-				assert.EqualValues(t, string(b), buf.String())
-			},
+			"fixtures/docstring-empty.expected.feature",
 		},
 	}
 
 	for _, scenario := range scenarios {
-		s, err := extractSections(scenario.filename)
+		file, err := os.Open(scenario.input)
+		assert.NoError(t, err)
 
+		s, err := extractSections(file)
 		assert.NoError(t, err)
 
 		aliases := map[string]string{
 			"seq": "seq 1 3",
 		}
 
-		scenario.test(transform(s, indent{2, 4, 6}, aliases))
+		buf, err := transform(s, indent{2, 4, 6}, aliases)
+		assert.NoError(t, err)
+
+		b, e := ioutil.ReadFile(scenario.expected)
+
+		assert.NoError(t, e)
+		assert.EqualValues(t, string(b), buf.String())
 	}
 }

@@ -27,9 +27,18 @@ func TestFileManagerTransform(t *testing.T) {
 			},
 		},
 		{
+			"fixtures/utf8-with-bom.feature",
+			func(buf bytes.Buffer, err error) {
+				b, e := ioutil.ReadFile("fixtures/utf8-with-bom.feature")
+
+				assert.NoError(t, e)
+				assert.EqualValues(t, string(b), buf.String())
+			},
+		},
+		{
 			"fixtures/",
 			func(buf bytes.Buffer, err error) {
-				assert.EqualError(t, err, "Parser errors:\nread fixtures/: is a directory")
+				assert.EqualError(t, err, "read fixtures/: is a directory")
 			},
 		},
 	}
