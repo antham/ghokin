@@ -53,7 +53,7 @@ jobs:
 
   publish:
     docker:
-      - image: circleci/golang:1.9
+      - image: circleci/golang:1.11
     working_directory: /go/src/github.com/antham/ghokin
     steps:
       - checkout
