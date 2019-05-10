@@ -4,8 +4,6 @@ jobs:
     docker:
       - image: circleci/golang:1.11
     working_directory: /go/src/github.com/antham/ghokin
-    environment:
-       BASH_ENV: /home/circleci/.bashrc
     steps:
       - checkout
       - restore_cache:
@@ -14,10 +12,14 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            mkdir /home/circleci/bin
-            wget -O ~/bin/doc-hunt https://github.com/antham/doc-hunt/releases/download/v2.1.1/doc-hunt_linux_amd64 && chmod 777 ~/bin/doc-hunt
-            wget -O ~/bin/gommit https://github.com/antham/gommit/releases/download/v2.1.1/gommit_linux_386 && chmod 777 ~/bin/gommit
+            wget -O doc-hunt https://github.com/antham/doc-hunt/releases/download/v2.1.1/doc-hunt_linux_amd64 && \
+            sudo mv doc-hunt /usr/local/bin && \
+            sudo chmod 777 /usr/local/bin/doc-hunt
+            wget -O gommit https://github.com/antham/gommit/releases/download/v2.1.1/gommit_linux_386 && \
+            sudo mv gommit /usr/local/bin && \
+            sudo chmod 777 /usr/local/bin/gommit
             go get -u github.com/mitchellh/gox
+            go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
       - run:
           name: Install vendors
           command: |
@@ -26,7 +28,7 @@ jobs:
       - run:
           name: Run tests
           command: |
-            make run-tests
+            make test-all
       - run:
           name: Compile
           command: |
@@ -36,12 +38,8 @@ jobs:
           command: |
             if [ $CIRCLE_BRANCH != 'master' ]; then
             git fetch --all
-            ~/bin/gommit check range $(git rev-parse origin/master) $(git rev-parse ${CIRCLE_BRANCH})
+            gommit check range $(git rev-parse origin/master) $(git rev-parse ${CIRCLE_BRANCH})
             fi
-      - run:
-          name: Run doc-hunt
-          command: |
-            ~/bin/doc-hunt check -e
       - save_cache:
           key: pkg-cache-{{ checksum "go.sum" }}-v1
           paths:

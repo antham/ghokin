@@ -4,8 +4,8 @@ PKGS := $(shell go list ./... | grep -v /vendor)
 fmt:
 	find . ! -path "./vendor/*" -name "*.go" -exec gofmt -s -w {} \;
 
-gometalinter:
-	gometalinter -D gotype -D aligncheck --vendor --deadline=600s --dupl-threshold=200 -e '_string' -j 5 --exclude=test ./...
+lint:
+	golangci-lint run
 
 doc-hunt:
 	doc-hunt check -e
@@ -19,3 +19,5 @@ run-quick-tests:
 test-package:
 	go test -race -cover -coverprofile=/tmp/ghokin github.com/antham/ghokin/$(pkg)
 	go tool cover -html=/tmp/ghokin -o /tmp/ghokin.html
+
+test-all: lint run-tests doc-hunt
