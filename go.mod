@@ -13,6 +13,6 @@ require (
 	github.com/mitchellh/go-homedir v0.0.0-20180523094522-3864e76763d9
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/viper v1.4.0
-	github.com/stretchr/testify v1.3.0
+	github.com/stretchr/testify v1.4.0
 	golang.org/x/sync v0.0.0-20181108010431-42b317875d0f // indirect
 )
