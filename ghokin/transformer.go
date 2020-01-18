@@ -80,10 +80,10 @@ func transform(section *section, indentConf indent, aliases aliases) (bytes.Buff
 		switch sec.kind {
 		case gherkin.TokenType_Comment, gherkin.TokenType_Language:
 			cmd = extractCommand(sec.values, aliases)
-			padding = getTagOrCommentPadding(paddings, sec)
+			padding = getTagOrCommentPadding(paddings, indentConf, sec)
 			lines = trimLinesSpace(lines)
 		case gherkin.TokenType_TagLine:
-			padding = getTagOrCommentPadding(paddings, sec)
+			padding = getTagOrCommentPadding(paddings, indentConf, sec)
 		case gherkin.TokenType_DocStringSeparator, gherkin.TokenType_RuleLine:
 			lines = extractKeyword(sec.values)
 		case gherkin.TokenType_Other:
@@ -118,9 +118,9 @@ func buildBuffer(document []string) (bytes.Buffer, error) {
 	return buf, nil
 }
 
-func getTagOrCommentPadding(paddings map[gherkin.TokenType]int, sec *section) int {
+func getTagOrCommentPadding(paddings map[gherkin.TokenType]int, indentConf indent, sec *section) int {
 	var kind gherkin.TokenType
-	excluded := []gherkin.TokenType{gherkin.TokenType_Empty, gherkin.TokenType_TagLine, gherkin.TokenType_Comment}
+	excluded := []gherkin.TokenType{gherkin.TokenType_TagLine, gherkin.TokenType_Comment}
 
 	if sec.next(excluded) != nil {
 		kind = sec.next(excluded).kind
@@ -128,6 +128,11 @@ func getTagOrCommentPadding(paddings map[gherkin.TokenType]int, sec *section) in
 
 	if kind == 0 && sec.previous(excluded) != nil {
 		kind = sec.previous(excluded).kind
+	}
+
+	// indent the last comment line at the same level than scenario and background
+	if sec.next([]gherkin.TokenType{gherkin.TokenType_Empty}) == nil {
+		return indentConf.backgroundAndScenario
 	}
 
 	return paddings[kind]
