@@ -424,6 +424,14 @@ func TestTransform(t *testing.T) {
 			"fixtures/docstring-empty.input.feature",
 			"fixtures/docstring-empty.expected.feature",
 		},
+		{
+			"fixtures/comment-after-scenario.feature",
+			"fixtures/comment-after-scenario.feature",
+		},
+		{
+			"fixtures/comment-after-background.feature",
+			"fixtures/comment-after-background.feature",
+		},
 	}
 
 	for _, scenario := range scenarios {
