@@ -5,7 +5,7 @@ require (
 	github.com/cucumber/gherkin-go v0.0.0-20180702115136-c016180aa7b9
 	github.com/fatih/color v1.9.0
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/spf13/cobra v0.0.6
+	github.com/spf13/cobra v0.0.7
 	github.com/spf13/viper v1.6.2
 	github.com/stretchr/testify v1.5.1
 )
