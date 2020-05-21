@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/golang:1.11
+      - image: circleci/golang:1.14
     working_directory: /go/src/github.com/antham/ghokin
     steps:
       - checkout
@@ -12,14 +12,15 @@ jobs:
       - run:
           name: Install dependencies
           command: |
+            export GO111MODULE=on
             wget -O doc-hunt https://github.com/antham/doc-hunt/releases/download/v2.1.1/doc-hunt_linux_amd64 && \
             sudo mv doc-hunt /usr/local/bin && \
             sudo chmod 777 /usr/local/bin/doc-hunt
             wget -O gommit https://github.com/antham/gommit/releases/download/v2.1.1/gommit_linux_386 && \
             sudo mv gommit /usr/local/bin && \
             sudo chmod 777 /usr/local/bin/gommit
-            go get -u github.com/mitchellh/gox
-            go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
+            go get github.com/mitchellh/gox@v1.0.1
+            go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.27.0
       - run:
           name: Install vendors
           command: |
@@ -51,7 +52,7 @@ jobs:
 
   publish:
     docker:
-      - image: circleci/golang:1.11
+      - image: circleci/golang:1.14
     working_directory: /go/src/github.com/antham/ghokin
     steps:
       - checkout
@@ -62,9 +63,10 @@ jobs:
       - run:
           name: Install dependencies
           command: |
+            export GO111MODULE=on
             mkdir /home/circleci/bin
-            go get -u github.com/mitchellh/gox
-            go get -u github.com/tcnksm/ghr
+            go get github.com/mitchellh/gox@v1.0.1
+            go get github.com/tcnksm/ghr@v0.13.0
             wget -O ~/bin/chyle https://github.com/antham/chyle/releases/download/v1.2.0/chyle_linux_amd64
             chmod 777 ~/bin/chyle
       - run:
