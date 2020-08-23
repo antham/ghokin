@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/golang:1.14
+      - image: circleci/golang:1.15
     working_directory: /go/src/github.com/antham/ghokin
     steps:
       - checkout
@@ -33,7 +33,7 @@ jobs:
       - run:
           name: Compile
           command: |
-            gox -output "build/{{.Dir}}_{{.OS}}_{{.Arch}}"
+            gox -osarch "linux/amd64 darwin/amd64 windows/amd64" -output "build/{{.Dir}}_{{.OS}}_{{.Arch}}"
       - run:
           name: Run gommit
           command: |
@@ -52,7 +52,7 @@ jobs:
 
   publish:
     docker:
-      - image: circleci/golang:1.14
+      - image: circleci/golang:1.15
     working_directory: /go/src/github.com/antham/ghokin
     steps:
       - checkout
@@ -77,7 +77,7 @@ jobs:
       - run:
           name: Compile
           command: |
-            gox -output "build/{{.Dir}}_{{.OS}}_{{.Arch}}"
+            gox -osarch "linux/amd64 darwin/amd64 windows/amd64" -output "build/{{.Dir}}_{{.OS}}_{{.Arch}}"
       - run:
           run: Upload assets
           command: |
