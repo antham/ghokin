@@ -33,7 +33,7 @@ jobs:
       - run:
           name: Compile
           command: |
-            gox -output "build/{{.Dir}}_{{.OS}}_{{.Arch}}"
+            gox -osarch "linux/amd64 darwin/amd64 windows/amd64" -output "build/{{.Dir}}_{{.OS}}_{{.Arch}}"
       - run:
           name: Run gommit
           command: |
@@ -77,7 +77,7 @@ jobs:
       - run:
           name: Compile
           command: |
-            gox -output "build/{{.Dir}}_{{.OS}}_{{.Arch}}"
+            gox -osarch "linux/amd64 darwin/amd64 windows/amd64" -output "build/{{.Dir}}_{{.OS}}_{{.Arch}}"
       - run:
           run: Upload assets
           command: |
