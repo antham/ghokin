@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/cucumber/gherkin-go"
+	"github.com/cucumber/gherkin-go/v15"
 )
 
 // CmdErr is thrown when an error occurred when calling
@@ -38,31 +38,31 @@ func extractSections(file *os.File) (*section, error) {
 
 func transform(section *section, indentConf indent, aliases aliases) (bytes.Buffer, error) {
 	paddings := map[gherkin.TokenType]int{
-		gherkin.TokenType_FeatureLine:        0,
-		gherkin.TokenType_BackgroundLine:     indentConf.backgroundAndScenario,
-		gherkin.TokenType_ScenarioLine:       indentConf.backgroundAndScenario,
-		gherkin.TokenType_DocStringSeparator: indentConf.tableAndDocString,
-		gherkin.TokenType_RuleLine:           indentConf.tableAndDocString,
-		gherkin.TokenType_StepLine:           indentConf.step,
-		gherkin.TokenType_ExamplesLine:       indentConf.step,
-		gherkin.TokenType_Other:              indentConf.tableAndDocString,
-		gherkin.TokenType_TableRow:           indentConf.tableAndDocString,
+		gherkin.TokenTypeFeatureLine:        0,
+		gherkin.TokenTypeBackgroundLine:     indentConf.backgroundAndScenario,
+		gherkin.TokenTypeScenarioLine:       indentConf.backgroundAndScenario,
+		gherkin.TokenTypeDocStringSeparator: indentConf.tableAndDocString,
+		gherkin.TokenTypeRuleLine:           indentConf.tableAndDocString,
+		gherkin.TokenTypeStepLine:           indentConf.step,
+		gherkin.TokenTypeExamplesLine:       indentConf.step,
+		gherkin.TokenTypeOther:              indentConf.tableAndDocString,
+		gherkin.TokenTypeTableRow:           indentConf.tableAndDocString,
 	}
 
 	formats := map[gherkin.TokenType](func(values []*gherkin.Token) []string){
-		gherkin.TokenType_FeatureLine:        extractKeywordAndTextSeparatedWithAColon,
-		gherkin.TokenType_BackgroundLine:     extractKeywordAndTextSeparatedWithAColon,
-		gherkin.TokenType_ScenarioLine:       extractKeywordAndTextSeparatedWithAColon,
-		gherkin.TokenType_ExamplesLine:       extractKeywordAndTextSeparatedWithAColon,
-		gherkin.TokenType_Comment:            extractTokensText,
-		gherkin.TokenType_TagLine:            extractTokensItemsText,
-		gherkin.TokenType_DocStringSeparator: extractKeyword,
-		gherkin.TokenType_RuleLine:           extractKeyword,
-		gherkin.TokenType_Other:              extractTokensText,
-		gherkin.TokenType_StepLine:           extractTokensKeywordAndText,
-		gherkin.TokenType_TableRow:           extractTableRows,
-		gherkin.TokenType_Empty:              extractTokensItemsText,
-		gherkin.TokenType_Language:           extractLanguage,
+		gherkin.TokenTypeFeatureLine:        extractKeywordAndTextSeparatedWithAColon,
+		gherkin.TokenTypeBackgroundLine:     extractKeywordAndTextSeparatedWithAColon,
+		gherkin.TokenTypeScenarioLine:       extractKeywordAndTextSeparatedWithAColon,
+		gherkin.TokenTypeExamplesLine:       extractKeywordAndTextSeparatedWithAColon,
+		gherkin.TokenTypeComment:            extractTokensText,
+		gherkin.TokenTypeTagLine:            extractTokensItemsText,
+		gherkin.TokenTypeDocStringSeparator: extractKeyword,
+		gherkin.TokenTypeRuleLine:           extractKeyword,
+		gherkin.TokenTypeOther:              extractTokensText,
+		gherkin.TokenTypeStepLine:           extractTokensKeywordAndText,
+		gherkin.TokenTypeTableRow:           extractTableRows,
+		gherkin.TokenTypeEmpty:              extractTokensItemsText,
+		gherkin.TokenTypeLanguage:           extractLanguage,
 	}
 
 	var cmd *exec.Cmd
@@ -78,15 +78,15 @@ func transform(section *section, indentConf indent, aliases aliases) (bytes.Buff
 		lines := formats[sec.kind](sec.values)
 
 		switch sec.kind {
-		case gherkin.TokenType_Comment, gherkin.TokenType_Language:
+		case gherkin.TokenTypeComment, gherkin.TokenTypeLanguage:
 			cmd = extractCommand(sec.values, aliases)
 			padding = getTagOrCommentPadding(paddings, indentConf, sec)
 			lines = trimLinesSpace(lines)
-		case gherkin.TokenType_TagLine:
+		case gherkin.TokenTypeTagLine:
 			padding = getTagOrCommentPadding(paddings, indentConf, sec)
-		case gherkin.TokenType_DocStringSeparator, gherkin.TokenType_RuleLine:
+		case gherkin.TokenTypeDocStringSeparator, gherkin.TokenTypeRuleLine:
 			lines = extractKeyword(sec.values)
-		case gherkin.TokenType_Other:
+		case gherkin.TokenTypeOther:
 			if isDescriptionFeature(sec) {
 				lines = trimLinesSpace(lines)
 			}
@@ -120,7 +120,7 @@ func buildBuffer(document []string) (bytes.Buffer, error) {
 
 func getTagOrCommentPadding(paddings map[gherkin.TokenType]int, indentConf indent, sec *section) int {
 	var kind gherkin.TokenType
-	excluded := []gherkin.TokenType{gherkin.TokenType_TagLine, gherkin.TokenType_Comment}
+	excluded := []gherkin.TokenType{gherkin.TokenTypeTagLine, gherkin.TokenTypeComment}
 
 	if sec.next(excluded) != nil {
 		kind = sec.next(excluded).kind
@@ -131,7 +131,7 @@ func getTagOrCommentPadding(paddings map[gherkin.TokenType]int, indentConf inden
 	}
 
 	// indent the last comment line at the same level than scenario and background
-	if sec.next([]gherkin.TokenType{gherkin.TokenType_Empty}) == nil {
+	if sec.next([]gherkin.TokenType{gherkin.TokenTypeEmpty}) == nil {
 		return indentConf.backgroundAndScenario
 	}
 
@@ -139,7 +139,7 @@ func getTagOrCommentPadding(paddings map[gherkin.TokenType]int, indentConf inden
 }
 
 func computeCommand(cmd *exec.Cmd, lines []string, sec *section) (bool, []string, error) {
-	if sec.kind == gherkin.TokenType_Comment || sec.kind == gherkin.TokenType_DocStringSeparator || cmd == nil {
+	if sec.kind == gherkin.TokenTypeComment || sec.kind == gherkin.TokenTypeDocStringSeparator || cmd == nil {
 		return false, lines, nil
 	}
 
@@ -153,9 +153,9 @@ func computeCommand(cmd *exec.Cmd, lines []string, sec *section) (bool, []string
 }
 
 func isDescriptionFeature(sec *section) bool {
-	excluded := []gherkin.TokenType{gherkin.TokenType_Empty}
+	excluded := []gherkin.TokenType{gherkin.TokenTypeEmpty}
 
-	if sec.previous(excluded) != nil && sec.previous(excluded).kind == gherkin.TokenType_FeatureLine {
+	if sec.previous(excluded) != nil && sec.previous(excluded).kind == gherkin.TokenTypeFeatureLine {
 		return true
 	}
 
