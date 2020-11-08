@@ -3,7 +3,7 @@ module github.com/antham/ghokin
 require (
 	github.com/cucumber/gherkin-go/v15 v15.0.2
 	github.com/cucumber/messages-go/v13 v13.1.0 // indirect
-	github.com/fatih/color v1.9.0
+	github.com/fatih/color v1.10.0
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/magiconair/properties v1.8.4 // indirect
 	github.com/mattn/go-colorable v0.1.8 // indirect
