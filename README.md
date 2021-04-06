@@ -5,12 +5,19 @@ Ghokin format and apply transformation on gherkin files.
 
 ---
 
+* [Install] (#install)
 * [Usage](#usage)
 * [Documentation](#documentation)
 * [Setup](#setup)
 * [Contribute](#contribute)
 
 ---
+
+## Install
+
+Download the latest binary for your achitecture [here](https://github.com/antham/ghokin/releases/latest).
+
+If you can't find a binary for your architecture, install the go toolchain and run : `go get github.com/antham/ghokin`.
 
 ## Usage
 
