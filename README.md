@@ -5,7 +5,7 @@ Ghokin format and apply transformation on gherkin files.
 
 ---
 
-* [Install] (#install)
+* [Install](#install)
 * [Usage](#usage)
 * [Documentation](#documentation)
 * [Setup](#setup)
