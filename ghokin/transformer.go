@@ -253,7 +253,9 @@ func extractTableRows(tokens []*gherkin.Token) []string {
 		row := []string{}
 
 		for _, data := range tab.Items {
-			row = append(row, data.Text)
+			// A remaining pipe means it was escaped before to not be messed with pipe column delimiter
+			// so here we introduce the escaping sequence back
+			row = append(row, strings.ReplaceAll(data.Text, "|", "\\|"))
 		}
 
 		rows = append(rows, row)
