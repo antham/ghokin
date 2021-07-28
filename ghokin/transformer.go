@@ -143,7 +143,6 @@ func computeCommand(cmd *exec.Cmd, lines []string, sec *section) (bool, []string
 	}
 
 	l, err := runCommand(cmd, lines)
-
 	if err != nil {
 		return true, []string{}, err
 	}
