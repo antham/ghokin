@@ -73,7 +73,6 @@ func transform(section *section, indentConf indent, aliases aliases) (bytes.Buff
 			continue
 		}
 
-		var err error
 		padding := paddings[sec.kind]
 		lines := formats[sec.kind](sec.values)
 
@@ -144,7 +143,6 @@ func computeCommand(cmd *exec.Cmd, lines []string, sec *section) (bool, []string
 	}
 
 	l, err := runCommand(cmd, lines)
-
 	if err != nil {
 		return true, []string{}, err
 	}
@@ -233,7 +231,13 @@ func extractTokensKeywordAndText(tokens []*gherkin.Token) []string {
 }
 
 func extractKeywordAndTextSeparatedWithAColon(tokens []*gherkin.Token) []string {
-	return []string{fmt.Sprintf("%s: %s", tokens[0].Keyword, tokens[0].Text)}
+	content := []string{}
+
+	for _, token := range tokens {
+		content = append(content, fmt.Sprintf("%s: %s", token.Keyword, token.Text))
+	}
+
+	return content
 }
 
 func extractKeyword(tokens []*gherkin.Token) []string {
