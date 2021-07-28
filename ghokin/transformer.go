@@ -73,7 +73,6 @@ func transform(section *section, indentConf indent, aliases aliases) (bytes.Buff
 			continue
 		}
 
-		var err error
 		padding := paddings[sec.kind]
 		lines := formats[sec.kind](sec.values)
 
