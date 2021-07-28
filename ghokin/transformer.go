@@ -231,7 +231,13 @@ func extractTokensKeywordAndText(tokens []*gherkin.Token) []string {
 }
 
 func extractKeywordAndTextSeparatedWithAColon(tokens []*gherkin.Token) []string {
-	return []string{fmt.Sprintf("%s: %s", tokens[0].Keyword, tokens[0].Text)}
+	content := []string{}
+
+	for _, token := range tokens {
+		content = append(content, fmt.Sprintf("%s: %s", token.Keyword, token.Text))
+	}
+
+	return content
 }
 
 func extractKeyword(tokens []*gherkin.Token) []string {
