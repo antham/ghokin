@@ -1,5 +1,5 @@
 ﻿Feature: Test
-      This is a description
+  This is a description
 
   Background:
     Given something

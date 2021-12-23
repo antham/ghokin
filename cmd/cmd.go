@@ -16,6 +16,7 @@ func setupCmdFunc(f func(messageHandler, *cobra.Command, []string)) func(*cobra.
 
 func getFileManager() ghokin.FileManager {
 	return ghokin.NewFileManager(
+		viper.GetInt("indent.featureDescription"),
 		viper.GetInt("indent.backgroundAndScenario"),
 		viper.GetInt("indent.step"),
 		viper.GetInt("indent.tableAndDocString"),

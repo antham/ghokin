@@ -1,5 +1,5 @@
 Feature: A Feature
-      Description
+  Description
 
   Scenario: A scenario to test
     Given a thing

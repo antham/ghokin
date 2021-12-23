@@ -453,7 +453,7 @@ func TestTransform(t *testing.T) {
 			"seq": "seq 1 3",
 		}
 
-		buf, err := transform(s, indent{2, 4, 6}, aliases)
+		buf, err := transform(s, indent{2, 2, 4, 6}, aliases)
 		assert.NoError(t, err)
 
 		b, e := ioutil.ReadFile(scenario.expected)

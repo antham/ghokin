@@ -62,7 +62,7 @@ func TestFormatAndReplace(t *testing.T) {
 	assert.NoError(t, err)
 
 	b1Expected := `Feature: Test
-      Test
+  Test
   Scenario: Scenario1
     Given a test
 `
@@ -74,7 +74,7 @@ func TestFormatAndReplace(t *testing.T) {
 	assert.NoError(t, err)
 
 	b2Expected := `Feature: Test
-      Test
+  Test
   Scenario: Scenario2
     Given a test
 `

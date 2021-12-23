@@ -46,6 +46,7 @@ func initConfig(msgHandler messageHandler) func() {
 
 		viper.SetEnvPrefix("ghokin")
 		for _, err := range []error{
+			viper.BindEnv("indent.featureDescription"),
 			viper.BindEnv("indent.backgroundAndScenario"),
 			viper.BindEnv("indent.step"),
 			viper.BindEnv("indent.tableAndDocString"),
@@ -58,6 +59,7 @@ func initConfig(msgHandler messageHandler) func() {
 		viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 		viper.AutomaticEnv()
 
+		viper.SetDefault("indent.featureDescription", 2)
 		viper.SetDefault("indent.backgroundAndScenario", 2)
 		viper.SetDefault("indent.step", 4)
 		viper.SetDefault("indent.tableAndDocString", 6)

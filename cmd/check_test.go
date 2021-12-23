@@ -19,6 +19,7 @@ func TestCheck(t *testing.T) {
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
 
+	viper.Set("indent.featureDescription", 2)
 	viper.Set("indent.backgroundAndScenario", 2)
 	viper.Set("indent.step", 4)
 	viper.Set("indent.tableAndDocString", 6)
@@ -33,8 +34,8 @@ func TestCheck(t *testing.T) {
 
 	assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
 	assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
-	assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/file1.feature", []byte("Feature: Test\n      Test\n  Scenario: Scenario1\n    Given a test\n"), 0755))
-	assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/file2.feature", []byte("Feature: Test\n      Test\n  Scenario: Scenario2\n    Given a test\n"), 0755))
+	assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/file1.feature", []byte("Feature: Test\n  Test\n  Scenario: Scenario1\n    Given a test\n"), 0755))
+	assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/file2.feature", []byte("Feature: Test\n  Test\n  Scenario: Scenario2\n    Given a test\n"), 0755))
 
 	w.Add(1)
 
