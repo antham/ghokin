@@ -104,9 +104,10 @@ It's possible to override configuration by defining a ```.ghokin.yml``` file in 
 
 ```
 indent:
-  backgroundAndScenario: 4
-  step: 6
-  tableAndDocString: 8
+  featureDescription : 2
+  backgroundAndScenario: 2
+  step: 4
+  tableAndDocString: 6
 
 aliases:
   json: "jq ."
@@ -117,9 +118,10 @@ Aliases key defined [shell commands](#shell-commands) callable in comments as we
 It's possible to use environments variables instead of a static config file :
 
 ```
-export GHOKIN_INDENT_BACKGROUNDANDSCENARIO=4
-export GHOKIN_INDENT_STEP=6
-export GHOKIN_INDENT_TABLEANDDOCSTRING=8
+export GHOKIN_INDENT_FEATUREDESCRIPTION=2
+export GHOKIN_INDENT_BACKGROUNDANDSCENARIO=2
+export GHOKIN_INDENT_STEP=4
+export GHOKIN_INDENT_TABLEANDDOCSTRING=6
 export GHOKIN_ALIASES='{"json":"jq ."}'
 ```
 

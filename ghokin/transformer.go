@@ -88,6 +88,7 @@ func transform(section *section, indentConf indent, aliases aliases) (bytes.Buff
 		case gherkin.TokenTypeOther:
 			if isDescriptionFeature(sec) {
 				lines = trimLinesSpace(lines)
+				padding = indentConf.featureDescription
 			}
 		}
 

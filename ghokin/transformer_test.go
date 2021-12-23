@@ -223,7 +223,7 @@ func TestRunCommand(t *testing.T) {
 			[]string{"hello world !", "hello universe !"},
 			func(lines []string, err error) {
 				assert.Equal(t, []string{}, lines)
-				assert.Regexp(t, ".*catttttt.*not found.*", err.Error())
+				assert.Regexp(t, ".*catttttt.*(not found|introuvable).*", err.Error())
 			},
 		},
 	}
@@ -453,7 +453,7 @@ func TestTransform(t *testing.T) {
 			"seq": "seq 1 3",
 		}
 
-		buf, err := transform(s, indent{2, 4, 6}, aliases)
+		buf, err := transform(s, indent{2, 2, 4, 6}, aliases)
 		assert.NoError(t, err)
 
 		b, e := ioutil.ReadFile(scenario.expected)

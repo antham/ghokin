@@ -1,5 +1,5 @@
 Feature: A Feature
-      Description
+  Description
 
   ####
   Background:

@@ -25,6 +25,7 @@ func (p ProcessFileError) Error() string {
 type aliases map[string]string
 
 type indent struct {
+	featureDescription    int
 	backgroundAndScenario int
 	step                  int
 	tableAndDocString     int
@@ -38,9 +39,10 @@ type FileManager struct {
 
 // NewFileManager creates a brand new FileManager, it requires indentation values and aliases defined
 // as a shell commands in comments
-func NewFileManager(backgroundAndScenarioIndent int, stepIndent int, tableAndDocStringIndent int, aliases map[string]string) FileManager {
+func NewFileManager(featureDescription int, backgroundAndScenarioIndent int, stepIndent int, tableAndDocStringIndent int, aliases map[string]string) FileManager {
 	return FileManager{
 		indent{
+			featureDescription,
 			backgroundAndScenarioIndent,
 			stepIndent,
 			tableAndDocStringIndent,
