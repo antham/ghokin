@@ -223,7 +223,7 @@ func TestRunCommand(t *testing.T) {
 			[]string{"hello world !", "hello universe !"},
 			func(lines []string, err error) {
 				assert.Equal(t, []string{}, lines)
-				assert.Regexp(t, ".*catttttt.*not found.*", err.Error())
+				assert.Regexp(t, ".*catttttt.*(not found|introuvable).*", err.Error())
 			},
 		},
 	}
