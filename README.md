@@ -98,7 +98,7 @@ Feature: A Feature
 
 ### Config
 
-Defaut config is to use 2 spaces to indent background and scenarios, 4 spaces for steps and 6 for table and docstring; feature description follows table and docstring indentation.
+Defaut config is to use 2 spaces to indent feature description, background and scenarios, 4 spaces for steps and 6 for table and docstring.
 
 It's possible to override configuration by defining a ```.ghokin.yml``` file in the home directory or in the current directory where we are running the binary from :
 
