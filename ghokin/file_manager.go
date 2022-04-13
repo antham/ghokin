@@ -58,14 +58,11 @@ func (f FileManager) Transform(filename string) (bytes.Buffer, error) {
 	if err != nil {
 		return bytes.Buffer{}, err
 	}
-
 	bom, err := skipBom(file)
 	if err != nil {
 		return bytes.Buffer{}, err
 	}
-
 	section, err := extractSections(file)
-
 	if err != nil {
 		return bytes.Buffer{}, err
 	}
@@ -74,7 +71,6 @@ func (f FileManager) Transform(filename string) (bytes.Buffer, error) {
 	if err != nil {
 		return bytes.Buffer{}, err
 	}
-
 	return *bytes.NewBuffer(append(bom, buf.Bytes()...)), nil
 }
 
@@ -91,7 +87,6 @@ func (f FileManager) Check(path string, extensions []string) []error {
 
 func (f FileManager) process(path string, extensions []string, processFile func(file string, content []byte) error) []error {
 	errors := []error{}
-
 	fi, err := os.Stat(path)
 	if err != nil {
 		return append(errors, err)
@@ -102,16 +97,13 @@ func (f FileManager) process(path string, extensions []string, processFile func(
 		errors = append(errors, f.processPath(path, extensions, processFile)...)
 	case mode.IsRegular():
 		b, err := f.Transform(path)
-
 		if err != nil {
 			return append(errors, err)
 		}
-
 		if err := processFile(path, b.Bytes()); err != nil {
 			errors = append(errors, err)
 		}
 	}
-
 	return errors
 }
 
@@ -122,11 +114,9 @@ func (f FileManager) processPath(path string, extensions []string, processFile f
 	var mu sync.Mutex
 
 	files, err := findFeatureFiles(path, extensions)
-
 	if err != nil {
 		return []error{err}
 	}
-
 	if len(files) == 0 {
 		return []error{}
 	}
@@ -137,21 +127,18 @@ func (f FileManager) processPath(path string, extensions []string, processFile f
 		go func() {
 			for file := range fc {
 				b, err := f.Transform(file)
-
 				if err != nil {
 					mu.Lock()
 					errors = append(errors, ProcessFileError{Message: err.Error(), File: file})
 					mu.Unlock()
 					continue
 				}
-
 				if err := processFile(file, b.Bytes()); err != nil {
 					mu.Lock()
 					errors = append(errors, err)
 					mu.Unlock()
 				}
 			}
-
 			wg.Done()
 		}()
 	}
@@ -170,17 +157,13 @@ func (f FileManager) processPath(path string, extensions []string, processFile f
 
 func replaceFileWithContent(file string, content []byte) error {
 	f, err := os.Create(file)
-
 	if err != nil {
 		return ProcessFileError{Message: err.Error(), File: file}
 	}
-
 	_, err = f.Write(content)
-
 	if err != nil {
 		return ProcessFileError{Message: err.Error(), File: file}
 	}
-
 	return nil
 }
 

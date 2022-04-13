@@ -97,11 +97,9 @@ func transform(section *section, indentConf indent, aliases aliases) (bytes.Buff
 		if err != nil {
 			return bytes.Buffer{}, err
 		}
-
 		if computed {
 			cmd = nil
 		}
-
 		document = append(document, trimExtraTrailingSpace(indentStrings(padding, lines))...)
 	}
 
