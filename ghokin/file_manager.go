@@ -3,12 +3,13 @@ package ghokin
 import (
 	"bytes"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"os"
 	mpath "path"
 	"path/filepath"
 	"sync"
+
+	"github.com/antham/ghokin/ghokin/internal/transformer"
 )
 
 // ProcessFileError is emitted when processing a file trigger an error
@@ -53,25 +54,22 @@ func NewFileManager(featureDescription int, backgroundAndScenarioIndent int, ste
 
 // Transform formats and applies shell commands on feature file
 func (f FileManager) Transform(filename string) (bytes.Buffer, error) {
-	/* #nosec */
-	file, err := os.Open(filename)
+	content, err := os.ReadFile(filename)
 	if err != nil {
 		return bytes.Buffer{}, err
 	}
-	bom, err := skipBom(file)
+	contentTransformer := &transformer.ContentTransformer{}
+	contentTransformer.DetectSettings(content)
+	content = contentTransformer.Prepare(content)
+	section, err := extractSections(content)
 	if err != nil {
 		return bytes.Buffer{}, err
 	}
-	section, err := extractSections(file)
-	if err != nil {
-		return bytes.Buffer{}, err
-	}
-
 	buf, err := transform(section, f.indentConf, f.aliases)
 	if err != nil {
 		return bytes.Buffer{}, err
 	}
-	return *bytes.NewBuffer(append(bom, buf.Bytes()...)), nil
+	return *bytes.NewBuffer(contentTransformer.Restore(buf.Bytes())), nil
 }
 
 // TransformAndReplace formats and applies shell commands on file or folder
@@ -202,31 +200,4 @@ func findFeatureFiles(rootPath string, extensions []string) ([]string, error) {
 	}
 
 	return files, nil
-}
-
-// skipBom moves file pointer after BOM if one is found and returns it
-func skipBom(file *os.File) ([]byte, error) {
-	bom := []byte{'\xef', '\xbb', '\xbf'}
-
-	if _, err := file.Seek(0, io.SeekStart); err != nil {
-		return []byte{}, err
-	}
-
-	buffer := make([]byte, len(bom))
-
-	if n, err := file.Read(buffer); err != nil || n < len(bom) {
-		if _, serr := file.Seek(0, io.SeekStart); serr != nil {
-			return []byte{}, serr
-		}
-
-		return []byte{}, err
-	}
-
-	if bytes.Equal(bom, buffer) {
-		return bom, nil
-	}
-
-	_, err := file.Seek(0, io.SeekStart)
-
-	return []byte{}, err
 }

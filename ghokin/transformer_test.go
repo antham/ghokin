@@ -394,9 +394,9 @@ func TestExtractSections(t *testing.T) {
 	}
 
 	for _, scenario := range scenarios {
-		file, err := os.Open(scenario.filename)
+		content, err := os.ReadFile(scenario.filename)
 		assert.NoError(t, err)
-		scenario.test(extractSections(file))
+		scenario.test(extractSections(content))
 	}
 }
 
@@ -443,10 +443,9 @@ func TestTransform(t *testing.T) {
 	}
 
 	for _, scenario := range scenarios {
-		file, err := os.Open(scenario.input)
+		content, err := os.ReadFile(scenario.input)
 		assert.NoError(t, err)
-
-		s, err := extractSections(file)
+		s, err := extractSections(content)
 		assert.NoError(t, err)
 
 		aliases := map[string]string{

@@ -21,7 +21,6 @@ func TestFileManagerTransform(t *testing.T) {
 			"fixtures/file1.feature",
 			func(buf bytes.Buffer, err error) {
 				b, e := ioutil.ReadFile("fixtures/file1.feature")
-
 				assert.NoError(t, e)
 				assert.EqualValues(t, string(b), buf.String())
 			},
@@ -30,7 +29,22 @@ func TestFileManagerTransform(t *testing.T) {
 			"fixtures/utf8-with-bom.feature",
 			func(buf bytes.Buffer, err error) {
 				b, e := ioutil.ReadFile("fixtures/utf8-with-bom.feature")
-
+				assert.NoError(t, e)
+				assert.EqualValues(t, string(b), buf.String())
+			},
+		},
+		{
+			"fixtures/file1-with-cr.feature",
+			func(buf bytes.Buffer, err error) {
+				b, e := ioutil.ReadFile("fixtures/file1-with-cr.feature")
+				assert.NoError(t, e)
+				assert.EqualValues(t, string(b), buf.String())
+			},
+		},
+		{
+			"fixtures/file1-with-crlf.feature",
+			func(buf bytes.Buffer, err error) {
+				b, e := ioutil.ReadFile("fixtures/file1-with-crlf.feature")
 				assert.NoError(t, e)
 				assert.EqualValues(t, string(b), buf.String())
 			},
@@ -44,13 +58,16 @@ func TestFileManagerTransform(t *testing.T) {
 	}
 
 	for _, scenario := range scenarios {
-		f := NewFileManager(2, 2, 4, 6,
-			map[string]string{
-				"seq": "seq 1 3",
-			},
-		)
-
-		scenario.test(f.Transform(scenario.filename))
+		scenario := scenario
+		t.Run(scenario.filename, func(t *testing.T) {
+			t.Parallel()
+			f := NewFileManager(2, 2, 4, 6,
+				map[string]string{
+					"seq": "seq 1 3",
+				},
+			)
+			scenario.test(f.Transform(scenario.filename))
+		})
 	}
 }
 
@@ -99,7 +116,6 @@ hello world
 `
 
 				b, e := ioutil.ReadFile("/tmp/ghokin/file1.feature")
-
 				assert.NoError(t, e)
 				assert.EqualValues(t, content, string(b))
 			},
@@ -159,7 +175,6 @@ hello world
 					"/tmp/ghokin/test2/test3/file6.feature",
 				} {
 					b, e := ioutil.ReadFile(f)
-
 					assert.NoError(t, e)
 					assert.EqualValues(t, fmt.Sprintf(content, i), string(b))
 				}
@@ -281,7 +296,6 @@ hello world
 					},
 				} {
 					b, e := ioutil.ReadFile(s.filename)
-
 					assert.NoError(t, e)
 					assert.EqualValues(t, s.expected, string(b))
 				}
@@ -326,13 +340,11 @@ hello world
 	for _, scenario := range scenarios {
 		t.Run(scenario.testName, func(t *testing.T) {
 			scenario.setup()
-
 			f := NewFileManager(1, 2, 4, 6,
 				map[string]string{
 					"seq": "seq 1 3",
 				},
 			)
-
 			scenario.test(f.TransformAndReplace(scenario.path, scenario.extensions))
 		})
 	}

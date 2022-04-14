@@ -3,7 +3,6 @@ package ghokin
 import (
 	"bytes"
 	"fmt"
-	"os"
 	"os/exec"
 	"regexp"
 	"strconv"
@@ -23,16 +22,13 @@ func (e CmdErr) Error() string {
 	return e.output
 }
 
-func extractSections(file *os.File) (*section, error) {
+func extractSections(content []byte) (*section, error) {
 	section := &section{}
 	builder := &tokenGenerator{section: section}
-
 	matcher := gherkin.NewMatcher(gherkin.GherkinDialectsBuildin())
-	scanner := gherkin.NewScanner(file)
+	scanner := gherkin.NewScanner(bytes.NewBuffer(content))
 	parser := gherkin.NewParser(builder)
-
 	parser.StopAtFirstError(true)
-
 	return section, parser.Parse(scanner, matcher)
 }
 
@@ -108,11 +104,9 @@ func transform(section *section, indentConf indent, aliases aliases) (bytes.Buff
 
 func buildBuffer(document []string) (bytes.Buffer, error) {
 	var buf bytes.Buffer
-
 	if _, err := buf.WriteString(strings.Join(document, "\n") + "\n"); err != nil {
 		return bytes.Buffer{}, err
 	}
-
 	return buf, nil
 }
 
