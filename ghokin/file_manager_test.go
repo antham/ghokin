@@ -1,7 +1,6 @@
 package ghokin
 
 import (
-	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -13,45 +12,45 @@ import (
 func TestFileManagerTransform(t *testing.T) {
 	type scenario struct {
 		filename string
-		test     func(bytes.Buffer, error)
+		test     func([]byte, error)
 	}
 
 	scenarios := []scenario{
 		{
 			"fixtures/file1.feature",
-			func(buf bytes.Buffer, err error) {
+			func(buf []byte, err error) {
 				b, e := ioutil.ReadFile("fixtures/file1.feature")
 				assert.NoError(t, e)
-				assert.EqualValues(t, string(b), buf.String())
+				assert.EqualValues(t, string(b), string(buf))
 			},
 		},
 		{
 			"fixtures/utf8-with-bom.feature",
-			func(buf bytes.Buffer, err error) {
+			func(buf []byte, err error) {
 				b, e := ioutil.ReadFile("fixtures/utf8-with-bom.feature")
 				assert.NoError(t, e)
-				assert.EqualValues(t, string(b), buf.String())
+				assert.EqualValues(t, string(b), string(buf))
 			},
 		},
 		{
 			"fixtures/file1-with-cr.feature",
-			func(buf bytes.Buffer, err error) {
+			func(buf []byte, err error) {
 				b, e := ioutil.ReadFile("fixtures/file1-with-cr.feature")
 				assert.NoError(t, e)
-				assert.EqualValues(t, string(b), buf.String())
+				assert.EqualValues(t, string(b), string(buf))
 			},
 		},
 		{
 			"fixtures/file1-with-crlf.feature",
-			func(buf bytes.Buffer, err error) {
+			func(buf []byte, err error) {
 				b, e := ioutil.ReadFile("fixtures/file1-with-crlf.feature")
 				assert.NoError(t, e)
-				assert.EqualValues(t, string(b), buf.String())
+				assert.EqualValues(t, string(b), string(buf))
 			},
 		},
 		{
 			"fixtures/",
-			func(buf bytes.Buffer, err error) {
+			func(buf []byte, err error) {
 				assert.EqualError(t, err, "read fixtures/: is a directory")
 			},
 		},

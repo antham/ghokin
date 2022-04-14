@@ -53,23 +53,23 @@ func NewFileManager(featureDescription int, backgroundAndScenarioIndent int, ste
 }
 
 // Transform formats and applies shell commands on feature file
-func (f FileManager) Transform(filename string) (bytes.Buffer, error) {
+func (f FileManager) Transform(filename string) ([]byte, error) {
 	content, err := os.ReadFile(filename)
 	if err != nil {
-		return bytes.Buffer{}, err
+		return []byte{}, err
 	}
 	contentTransformer := &transformer.ContentTransformer{}
 	contentTransformer.DetectSettings(content)
 	content = contentTransformer.Prepare(content)
 	section, err := extractSections(content)
 	if err != nil {
-		return bytes.Buffer{}, err
+		return []byte{}, err
 	}
-	buf, err := transform(section, f.indentConf, f.aliases)
+	content, err = transform(section, f.indentConf, f.aliases)
 	if err != nil {
-		return bytes.Buffer{}, err
+		return []byte{}, err
 	}
-	return *bytes.NewBuffer(contentTransformer.Restore(buf.Bytes())), nil
+	return contentTransformer.Restore(content), nil
 }
 
 // TransformAndReplace formats and applies shell commands on file or folder
@@ -98,7 +98,7 @@ func (f FileManager) process(path string, extensions []string, processFile func(
 		if err != nil {
 			return append(errors, err)
 		}
-		if err := processFile(path, b.Bytes()); err != nil {
+		if err := processFile(path, b); err != nil {
 			errors = append(errors, err)
 		}
 	}
@@ -131,7 +131,7 @@ func (f FileManager) processPath(path string, extensions []string, processFile f
 					mu.Unlock()
 					continue
 				}
-				if err := processFile(file, b.Bytes()); err != nil {
+				if err := processFile(file, b); err != nil {
 					mu.Lock()
 					errors = append(errors, err)
 					mu.Unlock()

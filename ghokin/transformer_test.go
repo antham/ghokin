@@ -458,6 +458,6 @@ func TestTransform(t *testing.T) {
 		b, e := ioutil.ReadFile(scenario.expected)
 
 		assert.NoError(t, e)
-		assert.EqualValues(t, string(b), buf.String())
+		assert.EqualValues(t, string(b), string(buf))
 	}
 }

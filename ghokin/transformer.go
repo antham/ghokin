@@ -32,7 +32,7 @@ func extractSections(content []byte) (*section, error) {
 	return section, parser.Parse(scanner, matcher)
 }
 
-func transform(section *section, indentConf indent, aliases aliases) (bytes.Buffer, error) {
+func transform(section *section, indentConf indent, aliases aliases) ([]byte, error) {
 	paddings := map[gherkin.TokenType]int{
 		gherkin.TokenTypeFeatureLine:        0,
 		gherkin.TokenTypeBackgroundLine:     indentConf.backgroundAndScenario,
@@ -91,23 +91,14 @@ func transform(section *section, indentConf indent, aliases aliases) (bytes.Buff
 		computed, lines, err := computeCommand(cmd, lines, sec)
 
 		if err != nil {
-			return bytes.Buffer{}, err
+			return []byte{}, err
 		}
 		if computed {
 			cmd = nil
 		}
 		document = append(document, trimExtraTrailingSpace(indentStrings(padding, lines))...)
 	}
-
-	return buildBuffer(document)
-}
-
-func buildBuffer(document []string) (bytes.Buffer, error) {
-	var buf bytes.Buffer
-	if _, err := buf.WriteString(strings.Join(document, "\n") + "\n"); err != nil {
-		return bytes.Buffer{}, err
-	}
-	return buf, nil
+	return []byte(strings.Join(document, "\n") + "\n"), nil
 }
 
 func getTagOrCommentPadding(paddings map[gherkin.TokenType]int, indentConf indent, sec *section) int {

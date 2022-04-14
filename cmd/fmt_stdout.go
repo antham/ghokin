@@ -16,12 +16,10 @@ func formatOnStdout(msgHandler messageHandler, cmd *cobra.Command, args []string
 	}
 
 	output, err := getFileManager().Transform(args[0])
-
 	if err != nil {
 		msgHandler.errorFatal(err)
 	}
-
-	msgHandler.print("%s", output.String())
+	msgHandler.print("%s", output)
 }
 
 func init() {
