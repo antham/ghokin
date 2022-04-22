@@ -36,34 +36,22 @@ func TestInitConfig(t *testing.T) {
 		{
 			func() {},
 			func(exitCode int, stdin string, stderr string) {
-				assert.EqualValues(t, 2, viper.GetInt("indent.featureDescription"))
-				assert.EqualValues(t, 2, viper.GetInt("indent.backgroundAndScenario"))
-				assert.EqualValues(t, 4, viper.GetInt("indent.step"))
-				assert.EqualValues(t, 6, viper.GetInt("indent.tableAndDocString"))
+				assert.EqualValues(t, 2, viper.GetInt("indent"))
 				assert.EqualValues(t, map[string]string{}, viper.GetStringMapString("aliases"))
 			},
 			func() {},
 		},
 		{
 			func() {
-				os.Setenv("GHOKIN_INDENT_FEATUREDESCRIPTION", "1")
-				os.Setenv("GHOKIN_INDENT_BACKGROUNDANDSCENARIO", "4")
-				os.Setenv("GHOKIN_INDENT_STEP", "6")
-				os.Setenv("GHOKIN_INDENT_TABLEANDDOCSTRING", "8")
+				os.Setenv("GHOKIN_INDENT", "1")
 				os.Setenv("GHOKIN_ALIASES", `{"json":"jq"}`)
 			},
 			func(exitCode int, stdin string, stderr string) {
-				assert.EqualValues(t, 1, viper.GetInt("indent.featureDescription"))
-				assert.EqualValues(t, 4, viper.GetInt("indent.backgroundAndScenario"))
-				assert.EqualValues(t, 6, viper.GetInt("indent.step"))
-				assert.EqualValues(t, 8, viper.GetInt("indent.tableAndDocString"))
+				assert.EqualValues(t, 1, viper.GetInt("indent"))
 				assert.EqualValues(t, map[string]string{"json": "jq"}, viper.GetStringMapString("aliases"))
 			},
 			func() {
-				os.Unsetenv("GHOKIN_INDENT_FEATUREDESCRIPTION")
-				os.Unsetenv("GHOKIN_INDENT_BACKGROUNDANDSCENARIO")
-				os.Unsetenv("GHOKIN_INDENT_STEP")
-				os.Unsetenv("GHOKIN_INDENT_TABLEANDDOCSTRING")
+				os.Unsetenv("GHOKIN_INDENT")
 				os.Unsetenv("GHOKIN_ALIASES")
 			},
 		},
@@ -81,21 +69,14 @@ func TestInitConfig(t *testing.T) {
 		},
 		{
 			func() {
-				data := `indent:
-  featureDescription: 6
-  backgroundAndScenario: 8
-  step: 10
-  tableAndDocString: 12
+				data := `indent: 12
 aliases:
   cat: cat
 `
 				assert.NoError(t, ioutil.WriteFile(".ghokin.yml", []byte(data), 0777))
 			},
 			func(exitCode int, stdin string, stderr string) {
-				assert.EqualValues(t, 6, viper.GetInt("indent.featureDescription"))
-				assert.EqualValues(t, 8, viper.GetInt("indent.backgroundAndScenario"))
-				assert.EqualValues(t, 10, viper.GetInt("indent.step"))
-				assert.EqualValues(t, 12, viper.GetInt("indent.tableAndDocString"))
+				assert.EqualValues(t, 12, viper.GetInt("indent"))
 				assert.EqualValues(t, map[string]string{"cat": "cat"}, viper.GetStringMapString("aliases"))
 			},
 			func() {
@@ -104,11 +85,7 @@ aliases:
 		},
 		{
 			func() {
-				data := `indent:
-  featureDescription: 8
-  backgroundAndScenario: 10
-  step: 12
-  tableAndDocString: 14
+				data := `indent: 14
 aliases:
   seq: seq
 `
@@ -116,10 +93,7 @@ aliases:
 				assert.NoError(t, ioutil.WriteFile(".test.yml", []byte(data), 0777))
 			},
 			func(exitCode int, stdin string, stderr string) {
-				assert.EqualValues(t, 8, viper.GetInt("indent.featureDescription"))
-				assert.EqualValues(t, 10, viper.GetInt("indent.backgroundAndScenario"))
-				assert.EqualValues(t, 12, viper.GetInt("indent.step"))
-				assert.EqualValues(t, 14, viper.GetInt("indent.tableAndDocString"))
+				assert.EqualValues(t, 14, viper.GetInt("indent"))
 				assert.EqualValues(t, map[string]string{"seq": "seq"}, viper.GetStringMapString("aliases"))
 			},
 			func() {

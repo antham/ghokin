@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"testing"
 
-	"github.com/cucumber/gherkin-go/v15"
+	"github.com/cucumber/common/gherkin/go/v23"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -443,21 +443,24 @@ func TestTransform(t *testing.T) {
 	}
 
 	for _, scenario := range scenarios {
-		content, err := os.ReadFile(scenario.input)
-		assert.NoError(t, err)
-		s, err := extractSections(content)
-		assert.NoError(t, err)
+		scenario := scenario
+		t.Run(scenario.input, func(t *testing.T) {
+			t.Parallel()
+			content, err := os.ReadFile(scenario.input)
+			assert.NoError(t, err)
+			s, err := extractSections(content)
+			assert.NoError(t, err)
 
-		aliases := map[string]string{
-			"seq": "seq 1 3",
-		}
+			aliases := map[string]string{
+				"seq": "seq 1 3",
+			}
 
-		buf, err := transform(s, indent{2, 2, 4, 6}, aliases)
-		assert.NoError(t, err)
+			buf, err := transform(s, 2, aliases)
+			assert.NoError(t, err)
 
-		b, e := ioutil.ReadFile(scenario.expected)
-
-		assert.NoError(t, e)
-		assert.EqualValues(t, string(b), string(buf))
+			b, e := ioutil.ReadFile(scenario.expected)
+			assert.NoError(t, e)
+			assert.EqualValues(t, string(b), string(buf))
+		})
 	}
 }

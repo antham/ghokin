@@ -1,7 +1,7 @@
 package ghokin
 
 import (
-	"github.com/cucumber/gherkin-go/v15"
+	"github.com/cucumber/common/gherkin/go/v23"
 )
 
 type tokenGenerator struct {

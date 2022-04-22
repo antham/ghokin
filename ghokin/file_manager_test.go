@@ -60,7 +60,7 @@ func TestFileManagerTransform(t *testing.T) {
 		scenario := scenario
 		t.Run(scenario.filename, func(t *testing.T) {
 			t.Parallel()
-			f := NewFileManager(2, 2, 4, 6,
+			f := NewFileManager(2,
 				map[string]string{
 					"seq": "seq 1 3",
 				},
@@ -104,7 +104,7 @@ hello world
 				assert.Len(t, errs, 0)
 
 				content := `Feature: test
- test
+  test
 
   Scenario: scenario1
     Given whatever
@@ -155,7 +155,7 @@ hello world
 				assert.Len(t, errs, 0)
 
 				content := `Feature: test
- test
+  test
 
   Scenario: scenario%d
     Given whatever
@@ -185,7 +185,7 @@ hello world
 			[]string{"feature"},
 			func() {
 				content := []byte(`Feature: test
-     test
+      test
 
 Scenario:   scenario
    Given           whatever
@@ -256,7 +256,7 @@ hello world
 				assert.Len(t, errs, 0)
 
 				contentFormatted := `Feature: test
- test
+  test
 
   Scenario: scenario
     Given whatever
@@ -339,7 +339,7 @@ hello world
 	for _, scenario := range scenarios {
 		t.Run(scenario.testName, func(t *testing.T) {
 			scenario.setup()
-			f := NewFileManager(1, 2, 4, 6,
+			f := NewFileManager(2,
 				map[string]string{
 					"seq": "seq 1 3",
 				},
@@ -620,7 +620,7 @@ hello world
 		t.Run(scenario.testName, func(t *testing.T) {
 			scenario.setup()
 
-			f := NewFileManager(1, 2, 4, 6,
+			f := NewFileManager(2,
 				map[string]string{
 					"seq": "seq 1 3",
 				},

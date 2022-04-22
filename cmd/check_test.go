@@ -19,10 +19,7 @@ func TestCheck(t *testing.T) {
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
 
-	viper.Set("indent.featureDescription", 2)
-	viper.Set("indent.backgroundAndScenario", 2)
-	viper.Set("indent.step", 4)
-	viper.Set("indent.tableAndDocString", 6)
+	viper.Set("indent", 2)
 
 	msgHandler := messageHandler{
 		func(exitCode int) {

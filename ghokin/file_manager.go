@@ -25,29 +25,17 @@ func (p ProcessFileError) Error() string {
 
 type aliases map[string]string
 
-type indent struct {
-	featureDescription    int
-	backgroundAndScenario int
-	step                  int
-	tableAndDocString     int
-}
-
 // FileManager handles transformation on feature files
 type FileManager struct {
-	indentConf indent
-	aliases    aliases
+	indent  int
+	aliases aliases
 }
 
 // NewFileManager creates a brand new FileManager, it requires indentation values and aliases defined
 // as a shell commands in comments
-func NewFileManager(featureDescription int, backgroundAndScenarioIndent int, stepIndent int, tableAndDocStringIndent int, aliases map[string]string) FileManager {
+func NewFileManager(indent int, aliases map[string]string) FileManager {
 	return FileManager{
-		indent{
-			featureDescription,
-			backgroundAndScenarioIndent,
-			stepIndent,
-			tableAndDocStringIndent,
-		},
+		indent,
 		aliases,
 	}
 }
@@ -65,7 +53,7 @@ func (f FileManager) Transform(filename string) ([]byte, error) {
 	if err != nil {
 		return []byte{}, err
 	}
-	content, err = transform(section, f.indentConf, f.aliases)
+	content, err = transform(section, f.indent, f.aliases)
 	if err != nil {
 		return []byte{}, err
 	}
