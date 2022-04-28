@@ -6,7 +6,7 @@ import (
 
 var fmtCmd = &cobra.Command{
 	Use:   "fmt",
-	Short: "Format a feature file/folder",
+	Short: "Format stdin or a feature file/folder",
 	Run:   setupCmdFunc(format),
 }
 

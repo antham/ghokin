@@ -54,6 +54,12 @@ func TestFileManagerTransform(t *testing.T) {
 				assert.EqualError(t, err, "read fixtures/: is a directory")
 			},
 		},
+		{
+			"fixtures/invalid.feature",
+			func(buf []byte, err error) {
+				assert.Error(t, err)
+			},
+		},
 	}
 
 	for _, scenario := range scenarios {
@@ -334,6 +340,15 @@ hello world
 				assert.EqualError(t, errs[0], "stat whatever/whatever: no such file or directory")
 			},
 		},
+		{
+			"Format an invalid file",
+			"fixtures/invalid.feature",
+			[]string{"feature"},
+			func() {},
+			func(errs []error) {
+				assert.Len(t, errs, 1)
+			},
+		},
 	}
 
 	for _, scenario := range scenarios {
@@ -612,6 +627,15 @@ hello world
 			func(errs []error) {
 				assert.Len(t, errs, 1)
 				assert.EqualError(t, errs[0], "stat whatever/whatever: no such file or directory")
+			},
+		},
+		{
+			"Check an invalid file",
+			"fixtures/invalid.feature",
+			[]string{"feature"},
+			func() {},
+			func(errs []error) {
+				assert.Len(t, errs, 1)
 			},
 		},
 	}

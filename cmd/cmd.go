@@ -20,3 +20,10 @@ func getFileManager() ghokin.FileManager {
 		viper.GetStringMapString("aliases"),
 	)
 }
+
+func getStdinManager() ghokin.StdinManager {
+	return ghokin.NewStdinManager(
+		viper.GetInt("indent"),
+		viper.GetStringMapString("aliases"),
+	)
+}
