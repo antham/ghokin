@@ -1,15 +1,14 @@
-Ghokin [![CircleCI](https://circleci.com/gh/antham/ghokin.svg?style=svg)](https://circleci.com/gh/antham/ghokin) [![Go Report Card](https://goreportcard.com/badge/github.com/antham/ghokin)](https://goreportcard.com/report/github.com/antham/ghokin) [![codecov](https://codecov.io/gh/antham/ghokin/branch/master/graph/badge.svg)](https://codecov.io/gh/antham/ghokin) [![](https://godoc.org/github.com/antham/ghokin?status.svg)](http://godoc.org/github.com/antham/ghokin) [![GitHub tag](https://img.shields.io/github/tag/antham/ghokin.svg)]()
-======
+# Ghokin [![CircleCI](https://circleci.com/gh/antham/ghokin.svg?style=svg)](https://circleci.com/gh/antham/ghokin) [![Go Report Card](https://goreportcard.com/badge/github.com/antham/ghokin)](https://goreportcard.com/report/github.com/antham/ghokin) [![codecov](https://codecov.io/gh/antham/ghokin/branch/master/graph/badge.svg)](https://codecov.io/gh/antham/ghokin) [![](https://godoc.org/github.com/antham/ghokin?status.svg)](http://godoc.org/github.com/antham/ghokin) [![GitHub tag](https://img.shields.io/github/tag/antham/ghokin.svg)]()
 
 Ghokin format and apply transformation on gherkin files.
 
 ---
 
-* [Install](#install)
-* [Usage](#usage)
-* [Documentation](#documentation)
-* [Setup](#setup)
-* [Contribute](#contribute)
+- [Install](#install)
+- [Usage](#usage)
+- [Documentation](#documentation)
+- [Setup](#setup)
+- [Contribute](#contribute)
 
 ---
 
@@ -80,7 +79,7 @@ ghokin check features/
 ### Shell commands
 
 You can run shell commands from within your feature file to transform some datas with annotations, to do so you need first to define in the config an alias and afterwards you can simply "comment" the line before the line you want to transform with that alias.
-For instance let say ```@json``` calls behind the curtain ```jq```, we could validate and format some json in our feature like so :
+For instance let say `@json` calls behind the curtain `jq`, we could validate and format some json in our feature like so :
 
 ```
 Feature: A Feature
@@ -98,17 +97,12 @@ Feature: A Feature
 
 ### Config
 
-Defaut config is to use 2 spaces to indent feature description, background and scenarios, 4 spaces for steps and 6 for table and docstring.
+Defaut config is to use 2 spaces for indentation.
 
-It's possible to override configuration by defining a ```.ghokin.yml``` file in the home directory or in the current directory where we are running the binary from :
+It's possible to override configuration by defining a `.ghokin.yml` file in the home directory or in the current directory where we are running the binary from :
 
 ```
-indent:
-  featureDescription : 2
-  backgroundAndScenario: 2
-  step: 4
-  tableAndDocString: 6
-
+indent: 2
 aliases:
   json: "jq ."
 ```
@@ -118,10 +112,7 @@ Aliases key defined [shell commands](#shell-commands) callable in comments as we
 It's possible to use environments variables instead of a static config file :
 
 ```
-export GHOKIN_INDENT_FEATUREDESCRIPTION=2
-export GHOKIN_INDENT_BACKGROUNDANDSCENARIO=2
-export GHOKIN_INDENT_STEP=4
-export GHOKIN_INDENT_TABLEANDDOCSTRING=6
+export GHOKIN_INDENT=2
 export GHOKIN_ALIASES='{"json":"jq ."}'
 ```
 
@@ -136,4 +127,4 @@ If you want to add a new feature to ghokin project, the best way is to open a ti
 ### Setup
 
 After cloning the repository you need to install vendors with `go mod vendor`
-To test your changes locally you can run go tests with : ```make test-all```
+To test your changes locally you can run go tests with : `make test-all`

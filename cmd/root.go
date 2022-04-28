@@ -46,10 +46,7 @@ func initConfig(msgHandler messageHandler) func() {
 
 		viper.SetEnvPrefix("ghokin")
 		for _, err := range []error{
-			viper.BindEnv("indent.featureDescription"),
-			viper.BindEnv("indent.backgroundAndScenario"),
-			viper.BindEnv("indent.step"),
-			viper.BindEnv("indent.tableAndDocString"),
+			viper.BindEnv("indent"),
 		} {
 			if err != nil {
 				msgHandler.errorFatal(err)
@@ -58,17 +55,12 @@ func initConfig(msgHandler messageHandler) func() {
 
 		viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 		viper.AutomaticEnv()
-
-		viper.SetDefault("indent.featureDescription", 2)
-		viper.SetDefault("indent.backgroundAndScenario", 2)
-		viper.SetDefault("indent.step", 4)
-		viper.SetDefault("indent.tableAndDocString", 6)
+		viper.SetDefault("indent", 2)
 
 		aliases := map[string]string{}
 		if err := json.Unmarshal([]byte(viper.GetString("aliases")), &aliases); viper.IsSet("aliases") && err != nil {
 			msgHandler.errorFatalStr("check aliases is a well-formed JSON : " + err.Error())
 		}
-
 		viper.SetDefault("aliases", aliases)
 
 		if err := viper.ReadInConfig(); err != nil {
