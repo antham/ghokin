@@ -38,7 +38,6 @@ func transform(section *section, indent int, aliases aliases) ([]byte, error) {
 		gherkin.TokenTypeBackgroundLine:     indent,
 		gherkin.TokenTypeScenarioLine:       indent,
 		gherkin.TokenTypeDocStringSeparator: 3 * indent,
-		gherkin.TokenTypeRuleLine:           3 * indent,
 		gherkin.TokenTypeStepLine:           2 * indent,
 		gherkin.TokenTypeExamplesLine:       2 * indent,
 		gherkin.TokenTypeOther:              3 * indent,
@@ -53,7 +52,7 @@ func transform(section *section, indent int, aliases aliases) ([]byte, error) {
 		gherkin.TokenTypeComment:            extractTokensText,
 		gherkin.TokenTypeTagLine:            extractTokensItemsText,
 		gherkin.TokenTypeDocStringSeparator: extractKeyword,
-		gherkin.TokenTypeRuleLine:           extractKeyword,
+		gherkin.TokenTypeRuleLine:           extractKeywordAndTextSeparatedWithAColon,
 		gherkin.TokenTypeOther:              extractTokensText,
 		gherkin.TokenTypeStepLine:           extractTokensKeywordAndText,
 		gherkin.TokenTypeTableRow:           extractTableRows,
@@ -63,22 +62,26 @@ func transform(section *section, indent int, aliases aliases) ([]byte, error) {
 
 	var cmd *exec.Cmd
 	document := []string{}
+	optionalRulePadding := 0
 
 	for sec := section; sec != nil; sec = sec.nex {
 		if sec.kind == 0 {
 			continue
 		}
 
-		padding := paddings[sec.kind]
+		padding := paddings[sec.kind] + optionalRulePadding
 		lines := formats[sec.kind](sec.values)
 		switch sec.kind {
+		case gherkin.TokenTypeRuleLine:
+			optionalRulePadding = indent
+			padding = indent
 		case gherkin.TokenTypeComment, gherkin.TokenTypeLanguage:
 			cmd = extractCommand(sec.values, aliases)
 			padding = getTagOrCommentPadding(paddings, indent, sec)
 			lines = trimLinesSpace(lines)
 		case gherkin.TokenTypeTagLine:
 			padding = getTagOrCommentPadding(paddings, indent, sec)
-		case gherkin.TokenTypeDocStringSeparator, gherkin.TokenTypeRuleLine:
+		case gherkin.TokenTypeDocStringSeparator:
 			lines = extractKeyword(sec.values)
 		case gherkin.TokenTypeOther:
 			if isDescriptionFeature(sec) {

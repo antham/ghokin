@@ -440,6 +440,10 @@ func TestTransform(t *testing.T) {
 			"fixtures/several-scenario-following.feature",
 			"fixtures/several-scenario-following.feature",
 		},
+		{
+			"fixtures/rule.feature",
+			"fixtures/rule.feature",
+		},
 	}
 
 	for _, scenario := range scenarios {
