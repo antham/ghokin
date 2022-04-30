@@ -3,6 +3,7 @@ package cmd
 import (
 	"bytes"
 	"io/ioutil"
+	"os"
 	"sync"
 	"testing"
 
@@ -12,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFormatOnStdout(t *testing.T) {
+func TestFormatOnStdoutFromFile(t *testing.T) {
 	var code int
 	var w sync.WaitGroup
 	var stdout bytes.Buffer
@@ -55,6 +56,51 @@ func TestFormatOnStdout(t *testing.T) {
 	assert.EqualValues(t, string(b), stdout.String())
 }
 
+func TestFormatOnStdoutFromStdin(t *testing.T) {
+	var code int
+	var w sync.WaitGroup
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+
+	viper.Set("indent", 2)
+
+	msgHandler := messageHandler{
+		func(exitCode int) {
+			panic(exitCode)
+		},
+		&stdout,
+		&stderr,
+	}
+
+	w.Add(1)
+
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				code = r.(int)
+			}
+
+			w.Done()
+		}()
+
+		content, err := os.ReadFile("fixtures/feature.feature")
+		assert.NoError(t, err)
+		cmd := &cobra.Command{}
+		args := []string{}
+		cmd.SetIn(bytes.NewBuffer(content))
+		formatOnStdout(msgHandler, cmd, args)
+	}()
+
+	w.Wait()
+
+	b, err := ioutil.ReadFile("fixtures/feature.feature")
+
+	assert.NoError(t, err)
+
+	assert.EqualValues(t, 0, code, "Must exit with no errors (exit 0)")
+	assert.EqualValues(t, string(b), stdout.String())
+}
+
 func TestFormatOnStdoutWithErrors(t *testing.T) {
 	var code int
 	var w sync.WaitGroup
@@ -75,10 +121,6 @@ func TestFormatOnStdoutWithErrors(t *testing.T) {
 	}
 
 	scenarios := []scenario{
-		{
-			[]string{},
-			"you must provide a filename as argument\n",
-		},
 		{
 			[]string{"fixtures/featurefeature.feature"},
 			"open fixtures/featurefeature.feature: no such file or directory\n",

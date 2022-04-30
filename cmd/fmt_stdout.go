@@ -6,16 +6,19 @@ import (
 
 var fmtStdoutCmd = &cobra.Command{
 	Use:   "stdout [file path]",
-	Short: "Format a file and dump the result on stdout",
+	Short: "Format stdin or a file and dump the result on stdout",
 	Run:   setupCmdFunc(formatOnStdout),
 }
 
 func formatOnStdout(msgHandler messageHandler, cmd *cobra.Command, args []string) {
-	if len(args) != 1 {
-		msgHandler.errorFatalStr("you must provide a filename as argument")
+	var output []byte
+	var err error
+	if len(args) == 0 {
+		output, err = getStdinManager().Transform(cmd.InOrStdin())
+	} else {
+		output, err = getFileManager().Transform(args[0])
 	}
 
-	output, err := getFileManager().Transform(args[0])
 	if err != nil {
 		msgHandler.errorFatal(err)
 	}

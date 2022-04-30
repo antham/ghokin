@@ -40,10 +40,16 @@ Use "ghokin [command] --help" for more information about a command.
 
 ### fmt stdout
 
-Dump a feature file formatted on stdout
+Dump stdin or a feature file formatted on stdout
 
 ```
 ghokin fmt stdout features/test.feature
+```
+
+or
+
+```
+cat features/test.feature|ghokin fmt stdout
 ```
 
 ### fmt replace
