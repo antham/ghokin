@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/antham/ghokin/ghokin/internal/transformer"
+	"github.com/antham/ghokin/v3/ghokin/internal/transformer"
 )
 
 // ProcessFileError is emitted when processing a file trigger an error
