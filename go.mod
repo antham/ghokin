@@ -1,4 +1,4 @@
-module github.com/antham/ghokin
+module github.com/antham/ghokin/v3
 
 require (
 	github.com/cucumber/common/gherkin/go/v23 v23.0.1
