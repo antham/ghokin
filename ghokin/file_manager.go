@@ -135,8 +135,6 @@ func (f FileManager) processPath(path string, extensions []string, processFile f
 
 	close(fc)
 	wg.Wait()
-	mu.Lock()
-	defer mu.Unlock()
 
 	return errors
 }
