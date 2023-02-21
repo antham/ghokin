@@ -16,7 +16,7 @@ Ghokin format and apply transformation on gherkin files.
 
 Download the latest binary for your achitecture [here](https://github.com/antham/ghokin/releases/latest).
 
-If you can't find a binary for your architecture, install the go toolchain and run : `go install github.com/antham/ghokin@latest`.
+If you can't find a binary for your architecture, install the go toolchain, clone the repository and run : `go install .`.
 
 ## Usage
 
