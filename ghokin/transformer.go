@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/cucumber/common/gherkin/go/v23"
 )
@@ -247,9 +248,9 @@ func calculateLonguestLineLengthPerColumn(rows [][]string) []int {
 		for j, str := range row {
 			switch true {
 			case i == 0:
-				lengths = append(lengths, len(str))
-			case i != 0 && len(lengths) > j && lengths[j] < len(str):
-				lengths[j] = len(str)
+				lengths = append(lengths, utf8.RuneCountInString(str))
+			case i != 0 && len(lengths) > j && lengths[j] < utf8.RuneCountInString(str):
+				lengths[j] = utf8.RuneCountInString(str)
 			default:
 				lengths = append(lengths, 0)
 			}
