@@ -11,4 +11,4 @@ builds:
     goarch:
       - amd64
     ldflags:
-      - -X 'github.com/antham/ghokin/cmd.appVersion={{.Version}}'
+      - -X 'github.com/antham/ghokin/v3/cmd.appVersion={{.Version}}'
