@@ -9,7 +9,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/cucumber/common/gherkin/go/v23"
+	"github.com/cucumber/gherkin/go/v26"
 )
 
 // CmdErr is thrown when an error occurred when calling
@@ -26,7 +26,7 @@ func (e CmdErr) Error() string {
 func extractSections(content []byte) (*section, error) {
 	section := &section{}
 	builder := &tokenGenerator{section: section}
-	matcher := gherkin.NewMatcher(gherkin.GherkinDialectsBuildin())
+	matcher := gherkin.NewMatcher(gherkin.DialectsBuiltin())
 	scanner := gherkin.NewScanner(bytes.NewBuffer(content))
 	parser := gherkin.NewParser(builder)
 	parser.StopAtFirstError(true)

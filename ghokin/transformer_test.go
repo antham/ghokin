@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"testing"
 
-	"github.com/cucumber/common/gherkin/go/v23"
+	"github.com/cucumber/gherkin/go/v26"
 	"github.com/stretchr/testify/assert"
 )
 
