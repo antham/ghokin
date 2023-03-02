@@ -7,7 +7,6 @@ Ghokin format and apply transformation on gherkin files.
 - [Install](#install)
 - [Usage](#usage)
 - [Documentation](#documentation)
-- [Setup](#setup)
 - [Contribute](#contribute)
 
 ---
@@ -121,10 +120,6 @@ It's possible to use environments variables instead of a static config file :
 export GHOKIN_INDENT=2
 export GHOKIN_ALIASES='{"json":"jq ."}'
 ```
-
-## Setup
-
-Download from release page according to your architecture ghokin binary : https://github.com/antham/ghokin/releases
 
 ## Contribute
 
