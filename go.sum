@@ -425,8 +425,8 @@ github.com/coreos/go-semver v0.3.0/go.mod h1:nnelYz7RCh+5ahJtPPxZlU+153eP4D4r3Ee
 github.com/coreos/go-systemd/v22 v22.3.2/go.mod h1:Y58oyj3AT4RCenI/lSvhwexgC+NSVTIJ3seZv2GcEnc=
 github.com/cpuguy83/go-md2man/v2 v2.0.2/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
-github.com/cucumber/gherkin/go/v26 v26.0.3 h1:ExcdadOazxzN11RYQZfaWcODMp7ZbRYLwqMbqWF8QEw=
-github.com/cucumber/gherkin/go/v26 v26.0.3/go.mod h1:Xf+SrSuFbivEDZvmHjTShord3zlEkqsj7QB4sxl1SuU=
+github.com/cucumber/gherkin/go/v26 v26.1.0 h1:4KQc+ZFMxIefzQ4UaM2jrw49EtzhpuyPlrYiNp+f9s8=
+github.com/cucumber/gherkin/go/v26 v26.1.0/go.mod h1:DXzGlMmsnu+NsHt3xeuAEmxUJBGkaO4ODT/arrtU8/s=
 github.com/cucumber/messages/go/v21 v21.0.1 h1:wzA0LxwjlWQYZd32VTlAVDTkW6inOFmSM+RuOwHZiMI=
 github.com/cucumber/messages/go/v21 v21.0.1/go.mod h1:zheH/2HS9JLVFukdrsPWoPdmUtmYQAQPLk7w5vWsk5s=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
