@@ -1,7 +1,9 @@
 package ghokin
 
 import (
-	"github.com/cucumber/gherkin/go/v26"
+	"errors"
+
+	gherkin "github.com/cucumber/gherkin/go/v26"
 )
 
 type tokenGenerator struct {
@@ -9,6 +11,9 @@ type tokenGenerator struct {
 }
 
 func (t *tokenGenerator) Build(tok *gherkin.Token) (bool, error) {
+	if tok == nil {
+		return false, errors.New("token is not defined")
+	}
 	if tok.IsEOF() {
 		return true, nil
 	}
