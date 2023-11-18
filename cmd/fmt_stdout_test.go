@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"bytes"
-	"io/ioutil"
 	"os"
 	"sync"
 	"testing"
@@ -48,7 +47,7 @@ func TestFormatOnStdoutFromFile(t *testing.T) {
 
 	w.Wait()
 
-	b, err := ioutil.ReadFile("fixtures/feature.feature")
+	b, err := os.ReadFile("fixtures/feature.feature")
 
 	assert.NoError(t, err)
 
@@ -93,7 +92,7 @@ func TestFormatOnStdoutFromStdin(t *testing.T) {
 
 	w.Wait()
 
-	b, err := ioutil.ReadFile("fixtures/feature.feature")
+	b, err := os.ReadFile("fixtures/feature.feature")
 
 	assert.NoError(t, err)
 

@@ -107,10 +107,14 @@ func getTagOrCommentPadding(paddings map[gherkin.TokenType]int, indent int, sec 
 	var kind gherkin.TokenType
 	excluded := []gherkin.TokenType{gherkin.TokenTypeTagLine, gherkin.TokenTypeComment}
 	if sec.next(excluded) != nil {
-		kind = sec.next(excluded).kind
+		if s := sec.next(excluded); s != nil {
+			kind = s.kind
+		}
 	}
 	if kind == 0 && sec.previous(excluded) != nil {
-		kind = sec.previous(excluded).kind
+		if s := sec.previous(excluded); s != nil {
+			kind = s.kind
+		}
 	}
 	// indent the last comment line at the same level than scenario and background
 	if sec.next([]gherkin.TokenType{gherkin.TokenTypeEmpty}) == nil {
@@ -132,8 +136,10 @@ func computeCommand(cmd *exec.Cmd, lines []string, sec *section) (bool, []string
 
 func isDescriptionFeature(sec *section) bool {
 	excluded := []gherkin.TokenType{gherkin.TokenTypeEmpty}
-	if sec.previous(excluded) != nil && sec.previous(excluded).kind == gherkin.TokenTypeFeatureLine {
-		return true
+	if sec.previous(excluded) != nil {
+		if s := sec.previous(excluded); s != nil && s.kind == gherkin.TokenTypeFeatureLine {
+			return true
+		}
 	}
 	return false
 }

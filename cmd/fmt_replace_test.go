@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"bytes"
-	"io/ioutil"
 	"os"
 	"sync"
 	"testing"
@@ -31,8 +30,8 @@ func TestFormatAndReplace(t *testing.T) {
 
 	assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
 	assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
-	assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/file1.feature", []byte("Feature: Test\nTest\nScenario: Scenario1\nGiven a test\n"), 0755))
-	assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/file2.feature", []byte("Feature: Test\nTest\nScenario: Scenario2\nGiven a test\n"), 0755))
+	assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", []byte("Feature: Test\nTest\nScenario: Scenario1\nGiven a test\n"), 0755))
+	assert.NoError(t, os.WriteFile("/tmp/ghokin/file2.feature", []byte("Feature: Test\nTest\nScenario: Scenario2\nGiven a test\n"), 0755))
 
 	w.Add(1)
 
@@ -55,7 +54,7 @@ func TestFormatAndReplace(t *testing.T) {
 	assert.EqualValues(t, 0, code, "Must exit with errors (exit 0)")
 	assert.EqualValues(t, `"/tmp/ghokin" formatted`+"\n", stdout.String())
 
-	b1, err := ioutil.ReadFile("/tmp/ghokin/file1.feature")
+	b1, err := os.ReadFile("/tmp/ghokin/file1.feature")
 
 	assert.NoError(t, err)
 
@@ -67,7 +66,7 @@ func TestFormatAndReplace(t *testing.T) {
 
 	assert.EqualValues(t, b1Expected, string(b1))
 
-	b2, err := ioutil.ReadFile("/tmp/ghokin/file2.feature")
+	b2, err := os.ReadFile("/tmp/ghokin/file2.feature")
 
 	assert.NoError(t, err)
 

@@ -1,12 +1,11 @@
 package ghokin
 
 import (
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"testing"
 
-	"github.com/cucumber/gherkin/go/v26"
+	gherkin "github.com/cucumber/gherkin/go/v26"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -470,7 +469,7 @@ func TestTransform(t *testing.T) {
 			buf, err := transform(s, 2, aliases)
 			assert.NoError(t, err)
 
-			b, e := ioutil.ReadFile(scenario.expected)
+			b, e := os.ReadFile(scenario.expected)
 			assert.NoError(t, e)
 			assert.EqualValues(t, string(b), string(buf))
 		})

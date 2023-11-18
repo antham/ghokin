@@ -2,7 +2,6 @@ package ghokin
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -19,7 +18,7 @@ func TestFileManagerTransform(t *testing.T) {
 		{
 			"fixtures/file1.feature",
 			func(buf []byte, err error) {
-				b, e := ioutil.ReadFile("fixtures/file1.feature")
+				b, e := os.ReadFile("fixtures/file1.feature")
 				assert.NoError(t, e)
 				assert.EqualValues(t, string(b), string(buf))
 			},
@@ -27,7 +26,7 @@ func TestFileManagerTransform(t *testing.T) {
 		{
 			"fixtures/utf8-with-bom.feature",
 			func(buf []byte, err error) {
-				b, e := ioutil.ReadFile("fixtures/utf8-with-bom.feature")
+				b, e := os.ReadFile("fixtures/utf8-with-bom.feature")
 				assert.NoError(t, e)
 				assert.EqualValues(t, string(b), string(buf))
 			},
@@ -35,7 +34,7 @@ func TestFileManagerTransform(t *testing.T) {
 		{
 			"fixtures/file1-with-cr.feature",
 			func(buf []byte, err error) {
-				b, e := ioutil.ReadFile("fixtures/file1-with-cr.feature")
+				b, e := os.ReadFile("fixtures/file1-with-cr.feature")
 				assert.NoError(t, e)
 				assert.EqualValues(t, string(b), string(buf))
 			},
@@ -43,7 +42,7 @@ func TestFileManagerTransform(t *testing.T) {
 		{
 			"fixtures/file1-with-crlf.feature",
 			func(buf []byte, err error) {
-				b, e := ioutil.ReadFile("fixtures/file1-with-crlf.feature")
+				b, e := os.ReadFile("fixtures/file1-with-crlf.feature")
 				assert.NoError(t, e)
 				assert.EqualValues(t, string(b), string(buf))
 			},
@@ -104,7 +103,7 @@ hello world
 
 				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
 				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
-				assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/file1.feature", content, 0777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", content, 0777))
 			},
 			func(errs []error) {
 				assert.Len(t, errs, 0)
@@ -120,7 +119,7 @@ hello world
       """
 `
 
-				b, e := ioutil.ReadFile("/tmp/ghokin/file1.feature")
+				b, e := os.ReadFile("/tmp/ghokin/file1.feature")
 				assert.NoError(t, e)
 				assert.EqualValues(t, content, string(b))
 			},
@@ -154,7 +153,7 @@ hello world
 					"/tmp/ghokin/test2/test3/file5.feature",
 					"/tmp/ghokin/test2/test3/file6.feature",
 				} {
-					assert.NoError(t, ioutil.WriteFile(f, []byte(fmt.Sprintf(string(content), i)), 0777))
+					assert.NoError(t, os.WriteFile(f, []byte(fmt.Sprintf(string(content), i)), 0777))
 				}
 			},
 			func(errs []error) {
@@ -179,7 +178,7 @@ hello world
 					"/tmp/ghokin/test2/test3/file5.feature",
 					"/tmp/ghokin/test2/test3/file6.feature",
 				} {
-					b, e := ioutil.ReadFile(f)
+					b, e := os.ReadFile(f)
 					assert.NoError(t, e)
 					assert.EqualValues(t, fmt.Sprintf(content, i), string(b))
 				}
@@ -205,11 +204,11 @@ hello world
 				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
 				assert.NoError(t, os.MkdirAll("/tmp/ghokin/test1", 0777))
 
-				assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/file1.feature", content, 0777))
-				assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/file2.feature", append([]byte("whatever"), content...), 0777))
-				assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/test1/file3.feature", content, 0777))
-				assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/test1/file4.feature", content, 0777))
-				assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/test1/file5.feature", append([]byte("whatever"), content...), 0777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", content, 0777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file2.feature", append([]byte("whatever"), content...), 0777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/test1/file3.feature", content, 0777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/test1/file4.feature", content, 0777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/test1/file5.feature", append([]byte("whatever"), content...), 0777))
 			},
 			func(errs []error) {
 				assert.Len(t, errs, 2)
@@ -254,9 +253,9 @@ hello world
 				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
 				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
 
-				assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/file1.feature", content, 0777))
-				assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/file2.txt", content, 0777))
-				assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/file3.feat", content, 0777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", content, 0777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file2.txt", content, 0777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file3.feat", content, 0777))
 			},
 			func(errs []error) {
 				assert.Len(t, errs, 0)
@@ -300,7 +299,7 @@ hello world
 						contentFormatted,
 					},
 				} {
-					b, e := ioutil.ReadFile(s.filename)
+					b, e := os.ReadFile(s.filename)
 					assert.NoError(t, e)
 					assert.EqualValues(t, s.expected, string(b))
 				}
@@ -313,8 +312,8 @@ hello world
 			func() {
 				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
 				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
-				assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/file1.txt", []byte("file1"), 0777))
-				assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/file2.txt", []byte("file2"), 0777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.txt", []byte("file1"), 0777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file2.txt", []byte("file2"), 0777))
 			},
 			func(errs []error) {
 				assert.Len(t, errs, 0)
@@ -392,7 +391,7 @@ hello world
 
 				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
 				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
-				assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/file1.feature", content, 0777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", content, 0777))
 			},
 			func(errs []error) {
 				assert.Len(t, errs, 1)
@@ -416,7 +415,7 @@ hello world
 
 				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
 				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
-				assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/file1.feature", content, 0777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", content, 0777))
 			},
 			func(errs []error) {
 				assert.Len(t, errs, 0)
@@ -451,7 +450,7 @@ hello world
 					"/tmp/ghokin/test2/test3/file5.feature",
 					"/tmp/ghokin/test2/test3/file6.feature",
 				} {
-					assert.NoError(t, ioutil.WriteFile(f, []byte(fmt.Sprintf(string(content), i)), 0777))
+					assert.NoError(t, os.WriteFile(f, []byte(fmt.Sprintf(string(content), i)), 0777))
 				}
 			},
 			func(errs []error) {
@@ -501,7 +500,7 @@ hello world
 					"/tmp/ghokin/test2/test3/file5.feature",
 					"/tmp/ghokin/test2/test3/file6.feature",
 				} {
-					assert.NoError(t, ioutil.WriteFile(f, []byte(fmt.Sprintf(string(content), i)), 0777))
+					assert.NoError(t, os.WriteFile(f, []byte(fmt.Sprintf(string(content), i)), 0777))
 				}
 			},
 			func(errs []error) {
@@ -527,11 +526,11 @@ hello world
 				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
 				assert.NoError(t, os.MkdirAll("/tmp/ghokin/test1", 0777))
 
-				assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/file1.feature", content, 0777))
-				assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/file2.feature", append([]byte("whatever"), content...), 0777))
-				assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/test1/file3.feature", content, 0777))
-				assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/test1/file4.feature", content, 0777))
-				assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/test1/file5.feature", append([]byte("whatever"), content...), 0777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", content, 0777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file2.feature", append([]byte("whatever"), content...), 0777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/test1/file3.feature", content, 0777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/test1/file4.feature", content, 0777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/test1/file5.feature", append([]byte("whatever"), content...), 0777))
 			},
 			func(errs []error) {
 				assert.Len(t, errs, 2)
@@ -576,9 +575,9 @@ hello world
 				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
 				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
 
-				assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/file1.feature", content, 0777))
-				assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/file2.txt", content, 0777))
-				assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/file3.feat", content, 0777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", content, 0777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file2.txt", content, 0777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file3.feat", content, 0777))
 			},
 			func(errs []error) {
 				assert.Len(t, errs, 2)
@@ -602,8 +601,8 @@ hello world
 			func() {
 				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
 				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
-				assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/file1.txt", []byte("file1"), 0777))
-				assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/file2.txt", []byte("file2"), 0777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.txt", []byte("file1"), 0777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file2.txt", []byte("file2"), 0777))
 			},
 			func(errs []error) {
 				assert.Len(t, errs, 0)

@@ -3,7 +3,6 @@ package ghokin
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os"
 	mpath "path"
 	"path/filepath"
@@ -152,7 +151,7 @@ func replaceFileWithContent(file string, content []byte) error {
 }
 
 func check(file string, content []byte) error {
-	currentContent, err := ioutil.ReadFile(file) // #nosec
+	currentContent, err := os.ReadFile(file) // #nosec
 
 	if err != nil {
 		return ProcessFileError{Message: err.Error(), File: file}

@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"bytes"
-	"io/ioutil"
 	"os"
 	"sync"
 	"testing"
@@ -31,8 +30,8 @@ func TestCheck(t *testing.T) {
 
 	assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
 	assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
-	assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/file1.feature", []byte("Feature: Test\n  Test\n  Scenario: Scenario1\n    Given a test\n"), 0755))
-	assert.NoError(t, ioutil.WriteFile("/tmp/ghokin/file2.feature", []byte("Feature: Test\n  Test\n  Scenario: Scenario2\n    Given a test\n"), 0755))
+	assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", []byte("Feature: Test\n  Test\n  Scenario: Scenario1\n    Given a test\n"), 0755))
+	assert.NoError(t, os.WriteFile("/tmp/ghokin/file2.feature", []byte("Feature: Test\n  Test\n  Scenario: Scenario2\n    Given a test\n"), 0755))
 
 	w.Add(1)
 
