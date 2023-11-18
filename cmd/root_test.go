@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"bytes"
-	"io/ioutil"
 	"os"
 	"sync"
 	"testing"
@@ -73,7 +72,7 @@ func TestInitConfig(t *testing.T) {
 aliases:
   cat: cat
 `
-				assert.NoError(t, ioutil.WriteFile(".ghokin.yml", []byte(data), 0777))
+				assert.NoError(t, os.WriteFile(".ghokin.yml", []byte(data), 0777))
 			},
 			func(exitCode int, stdin string, stderr string) {
 				assert.EqualValues(t, 12, viper.GetInt("indent"))
@@ -90,7 +89,7 @@ aliases:
   seq: seq
 `
 				cfgFile = ".test.yml"
-				assert.NoError(t, ioutil.WriteFile(".test.yml", []byte(data), 0777))
+				assert.NoError(t, os.WriteFile(".test.yml", []byte(data), 0777))
 			},
 			func(exitCode int, stdin string, stderr string) {
 				assert.EqualValues(t, 14, viper.GetInt("indent"))
@@ -104,7 +103,7 @@ aliases:
 		{
 			func() {
 				data := `indent`
-				assert.NoError(t, ioutil.WriteFile(".ghokin.yml", []byte(data), 0777))
+				assert.NoError(t, os.WriteFile(".ghokin.yml", []byte(data), 0777))
 			},
 			func(exitCode int, stdin string, stderr string) {
 				assert.EqualValues(t, 1, exitCode)

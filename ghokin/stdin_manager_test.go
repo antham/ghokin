@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"io"
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -38,7 +37,7 @@ func TestStdinManagerTransform(t *testing.T) {
 				return stdinManager, bytes.NewBuffer(content)
 			},
 			func(buf []byte, err error) {
-				b, e := ioutil.ReadFile("fixtures/file1.feature")
+				b, e := os.ReadFile("fixtures/file1.feature")
 				assert.NoError(t, e)
 				assert.EqualValues(t, string(b), string(buf))
 			},
