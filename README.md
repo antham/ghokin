@@ -37,6 +37,8 @@ Flags:
 Use "ghokin [command] --help" for more information about a command.
 ```
 
+⚠️ Ghokin works only on `UTF-8` encoded files, it will detect and convert automatically files that are not encoded in this charset.
+
 ### fmt stdout
 
 Dump stdin or a feature file formatted on stdout

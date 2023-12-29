@@ -3,12 +3,15 @@ package ghokin
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"os"
 	mpath "path"
 	"path/filepath"
 	"sync"
 
 	"github.com/antham/ghokin/v3/ghokin/internal/transformer"
+	"github.com/saintfish/chardet"
+	"golang.org/x/net/html/charset"
 )
 
 // ProcessFileError is emitted when processing a file trigger an error
@@ -44,6 +47,21 @@ func (f FileManager) Transform(filename string) ([]byte, error) {
 	content, err := os.ReadFile(filename)
 	if err != nil {
 		return []byte{}, err
+	}
+	detector := chardet.NewTextDetector()
+	result, err := detector.DetectBest(content)
+	if err != nil {
+		return []byte{}, err
+	}
+	if result.Charset != "UTF-8" {
+		r, err := charset.NewReaderLabel(result.Charset, bytes.NewBuffer(content))
+		if err != nil {
+			return []byte{}, err
+		}
+		content, err = io.ReadAll(r)
+		if err != nil {
+			return []byte{}, err
+		}
 	}
 	contentTransformer := &transformer.ContentTransformer{}
 	contentTransformer.DetectSettings(content)
