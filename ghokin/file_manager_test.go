@@ -48,6 +48,15 @@ func TestFileManagerTransform(t *testing.T) {
 			},
 		},
 		{
+			"fixtures/iso-8859-1-encoding.input.feature",
+			func(buf []byte, err error) {
+				assert.NoError(t, err)
+				b, e := os.ReadFile("fixtures/iso-8859-1-encoding.expected.feature")
+				assert.NoError(t, e)
+				assert.EqualValues(t, string(b), string(buf))
+			},
+		},
+		{
 			"fixtures/",
 			func(buf []byte, err error) {
 				assert.EqualError(t, err, "read fixtures/: is a directory")
