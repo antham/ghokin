@@ -451,6 +451,10 @@ func TestTransform(t *testing.T) {
 			"fixtures/non-ascii-characters-formatting.feature",
 			"fixtures/non-ascii-characters-formatting.feature",
 		},
+		{
+			"fixtures/double-escaping.feature",
+			"fixtures/double-escaping.feature",
+		},
 	}
 
 	for _, scenario := range scenarios {
