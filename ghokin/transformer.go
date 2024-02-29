@@ -9,7 +9,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/cucumber/gherkin/go/v26"
+	"github.com/cucumber/gherkin/go/v28"
 )
 
 // CmdErr is thrown when an error occurred when calling
