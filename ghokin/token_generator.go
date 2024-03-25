@@ -34,9 +34,11 @@ func (t *tokenGenerator) Build(tok *gherkin.Token) (bool, error) {
 func (t *tokenGenerator) StartRule(r gherkin.RuleType) (bool, error) {
 	return true, nil
 }
+
 func (t *tokenGenerator) EndRule(r gherkin.RuleType) (bool, error) {
 	return true, nil
 }
+
 func (t *tokenGenerator) Reset() {
 }
 

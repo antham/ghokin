@@ -29,9 +29,9 @@ func TestFormatAndReplace(t *testing.T) {
 	}
 
 	assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
-	assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
-	assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", []byte("Feature: Test\nTest\nScenario: Scenario1\nGiven a test\n"), 0755))
-	assert.NoError(t, os.WriteFile("/tmp/ghokin/file2.feature", []byte("Feature: Test\nTest\nScenario: Scenario2\nGiven a test\n"), 0755))
+	assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0o777))
+	assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", []byte("Feature: Test\nTest\nScenario: Scenario1\nGiven a test\n"), 0o755))
+	assert.NoError(t, os.WriteFile("/tmp/ghokin/file2.feature", []byte("Feature: Test\nTest\nScenario: Scenario2\nGiven a test\n"), 0o755))
 
 	w.Add(1)
 
