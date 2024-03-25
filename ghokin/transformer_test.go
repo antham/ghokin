@@ -127,7 +127,7 @@ func TestExtractTableRows(t *testing.T) {
 	}
 
 	for _, scenario := range scenarios {
-		scenario.test(extractTableRows(scenario.tokens))
+		scenario.test(extractTableRowsAndComments(scenario.tokens))
 	}
 }
 
@@ -454,6 +454,10 @@ func TestTransform(t *testing.T) {
 		{
 			"fixtures/double-escaping.feature",
 			"fixtures/double-escaping.feature",
+		},
+		{
+			"fixtures/comment-in-a-midst-of-row.feature",
+			"fixtures/comment-in-a-midst-of-row.feature",
 		},
 	}
 

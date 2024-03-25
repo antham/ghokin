@@ -56,7 +56,7 @@ func transform(section *section, indent int, aliases aliases) ([]byte, error) {
 		gherkin.TokenTypeRuleLine:           extractKeywordAndTextSeparatedWithAColon,
 		gherkin.TokenTypeOther:              extractTokensText,
 		gherkin.TokenTypeStepLine:           extractTokensKeywordAndText,
-		gherkin.TokenTypeTableRow:           extractTableRows,
+		gherkin.TokenTypeTableRow:           extractTableRowsAndComments,
 		gherkin.TokenTypeEmpty:              extractTokensItemsText,
 		gherkin.TokenTypeLanguage:           extractLanguage,
 	}
@@ -64,14 +64,32 @@ func transform(section *section, indent int, aliases aliases) ([]byte, error) {
 	var cmd *exec.Cmd
 	document := []string{}
 	optionalRulePadding := 0
+	accumulator := []*gherkin.Token{}
 
 	for sec := section; sec != nil; sec = sec.nex {
-		if sec.kind == 0 {
+		values := sec.values
+		if len(accumulator) > 0 &&
+			sec.kind == gherkin.TokenTypeTableRow &&
+			(sec.nex != nil && sec.nex.kind != gherkin.TokenTypeComment) || sec.nex == nil {
+			values = append(accumulator, sec.values...)
+			accumulator = []*gherkin.Token{}
+		}
+		if sec.kind == gherkin.TokenTypeTableRow &&
+			sec.nex != nil &&
+			sec.nex.kind == gherkin.TokenTypeComment &&
+			sec.nex.nex != nil &&
+			sec.nex.nex.kind == gherkin.TokenTypeTableRow ||
+			len(accumulator) > 0 && sec.kind == gherkin.TokenTypeComment ||
+			len(accumulator) > 0 && sec.kind == gherkin.TokenTypeTableRow {
+			accumulator = append(accumulator, sec.values...)
 			continue
 		}
 
+		if sec.kind == 0 {
+			continue
+		}
 		padding := paddings[sec.kind] + optionalRulePadding
-		lines := formats[sec.kind](sec.values)
+		lines := formats[sec.kind](values)
 		switch sec.kind {
 		case gherkin.TokenTypeRuleLine:
 			optionalRulePadding = indent
@@ -216,33 +234,51 @@ func extractKeyword(tokens []*gherkin.Token) []string {
 	return content
 }
 
-func extractTableRows(tokens []*gherkin.Token) []string {
-	rows := [][]string{}
-	for _, tab := range tokens {
-		row := []string{}
-
-		for _, data := range tab.Items {
-			// A remaining pipe means it was escaped before to not be messed with pipe column delimiter
-			// so here we introduce the escaping sequence back
-			text := data.Text
-			text = strings.ReplaceAll(text, "\\", "\\\\")
-			text = strings.ReplaceAll(text, "\n", "\\n")
-			text = strings.ReplaceAll(text, "|", "\\|")
-			row = append(row, text)
-		}
-
-		rows = append(rows, row)
+func extractTableRowsAndComments(tokens []*gherkin.Token) []string {
+	type tableElement struct {
+		content []string
+		kind    gherkin.TokenType
 	}
+	rows := [][]string{}
+	tableElements := []tableElement{}
+	for _, token := range tokens {
+		element := tableElement{}
+		if token.Type == gherkin.TokenTypeComment {
+			element.kind = token.Type
+			element.content = []string{token.Text}
+		} else {
+			row := []string{}
+			for _, data := range token.Items {
+				// A remaining pipe means it was escaped before to not be messed with pipe column delimiter
+				// so here we introduce the escaping sequence back
+				text := data.Text
+				text = strings.ReplaceAll(text, "\\", "\\\\")
+				text = strings.ReplaceAll(text, "\n", "\\n")
+				text = strings.ReplaceAll(text, "|", "\\|")
+				row = append(row, text)
+			}
+			element.kind = token.Type
+			element.content = row
+			rows = append(rows, row)
+		}
+		tableElements = append(tableElements, element)
+	}
+
 	var tableRows []string
 	lengths := calculateLonguestLineLengthPerColumn(rows)
-	for _, row := range rows {
+	for _, tableElement := range tableElements {
 		inputs := []interface{}{}
 		fmtDirective := ""
-		for i, str := range row {
-			inputs = append(inputs, str)
-			fmtDirective += "| %-" + strconv.Itoa(lengths[i]) + "s "
+		if tableElement.kind == gherkin.TokenTypeComment {
+			inputs = append(inputs, trimLinesSpace(tableElement.content)[0])
+			fmtDirective = "%s"
+		} else {
+			for i, str := range tableElement.content {
+				inputs = append(inputs, str)
+				fmtDirective += "| %-" + strconv.Itoa(lengths[i]) + "s "
+			}
+			fmtDirective += "|"
 		}
-		fmtDirective += "|"
 		tableRows = append(tableRows, fmt.Sprintf(fmtDirective, inputs...))
 	}
 	return tableRows
