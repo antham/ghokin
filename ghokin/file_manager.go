@@ -170,7 +170,6 @@ func replaceFileWithContent(file string, content []byte) error {
 
 func check(file string, content []byte) error {
 	currentContent, err := os.ReadFile(file) // #nosec
-
 	if err != nil {
 		return ProcessFileError{Message: err.Error(), File: file}
 	}

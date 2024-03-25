@@ -111,8 +111,8 @@ hello world
 `)
 
 				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
-				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", content, 0777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0o777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", content, 0o777))
 			},
 			func(errs []error) {
 				assert.Len(t, errs, 0)
@@ -150,9 +150,9 @@ hello world
 `)
 
 				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin/test1", 0777))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin/test2/test3", 0777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0o777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin/test1", 0o777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin/test2/test3", 0o777))
 
 				for i, f := range []string{
 					"/tmp/ghokin/file1.feature",
@@ -162,7 +162,7 @@ hello world
 					"/tmp/ghokin/test2/test3/file5.feature",
 					"/tmp/ghokin/test2/test3/file6.feature",
 				} {
-					assert.NoError(t, os.WriteFile(f, []byte(fmt.Sprintf(string(content), i)), 0777))
+					assert.NoError(t, os.WriteFile(f, []byte(fmt.Sprintf(string(content), i)), 0o777))
 				}
 			},
 			func(errs []error) {
@@ -210,14 +210,14 @@ hello world
 `)
 
 				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin/test1", 0777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0o777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin/test1", 0o777))
 
-				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", content, 0777))
-				assert.NoError(t, os.WriteFile("/tmp/ghokin/file2.feature", append([]byte("whatever"), content...), 0777))
-				assert.NoError(t, os.WriteFile("/tmp/ghokin/test1/file3.feature", content, 0777))
-				assert.NoError(t, os.WriteFile("/tmp/ghokin/test1/file4.feature", content, 0777))
-				assert.NoError(t, os.WriteFile("/tmp/ghokin/test1/file5.feature", append([]byte("whatever"), content...), 0777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", content, 0o777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file2.feature", append([]byte("whatever"), content...), 0o777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/test1/file3.feature", content, 0o777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/test1/file4.feature", content, 0o777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/test1/file5.feature", append([]byte("whatever"), content...), 0o777))
 			},
 			func(errs []error) {
 				assert.Len(t, errs, 2)
@@ -260,11 +260,11 @@ hello world
 `)
 
 				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0o777))
 
-				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", content, 0777))
-				assert.NoError(t, os.WriteFile("/tmp/ghokin/file2.txt", content, 0777))
-				assert.NoError(t, os.WriteFile("/tmp/ghokin/file3.feat", content, 0777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", content, 0o777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file2.txt", content, 0o777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file3.feat", content, 0o777))
 			},
 			func(errs []error) {
 				assert.Len(t, errs, 0)
@@ -320,9 +320,9 @@ hello world
 			[]string{"feature"},
 			func() {
 				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
-				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.txt", []byte("file1"), 0777))
-				assert.NoError(t, os.WriteFile("/tmp/ghokin/file2.txt", []byte("file2"), 0777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0o777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.txt", []byte("file1"), 0o777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file2.txt", []byte("file2"), 0o777))
 			},
 			func(errs []error) {
 				assert.Len(t, errs, 0)
@@ -399,8 +399,8 @@ hello world
 `)
 
 				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
-				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", content, 0777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0o777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", content, 0o777))
 			},
 			func(errs []error) {
 				assert.Len(t, errs, 1)
@@ -423,8 +423,8 @@ hello world
 `)
 
 				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
-				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", content, 0777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0o777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", content, 0o777))
 			},
 			func(errs []error) {
 				assert.Len(t, errs, 0)
@@ -447,9 +447,9 @@ hello world
 `)
 
 				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin/test1", 0777))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin/test2/test3", 0777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0o777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin/test1", 0o777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin/test2/test3", 0o777))
 
 				for i, f := range []string{
 					"/tmp/ghokin/file1.feature",
@@ -459,7 +459,7 @@ hello world
 					"/tmp/ghokin/test2/test3/file5.feature",
 					"/tmp/ghokin/test2/test3/file6.feature",
 				} {
-					assert.NoError(t, os.WriteFile(f, []byte(fmt.Sprintf(string(content), i)), 0777))
+					assert.NoError(t, os.WriteFile(f, []byte(fmt.Sprintf(string(content), i)), 0o777))
 				}
 			},
 			func(errs []error) {
@@ -497,9 +497,9 @@ hello world
 `)
 
 				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin/test1", 0777))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin/test2/test3", 0777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0o777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin/test1", 0o777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin/test2/test3", 0o777))
 
 				for i, f := range []string{
 					"/tmp/ghokin/file1.feature",
@@ -509,7 +509,7 @@ hello world
 					"/tmp/ghokin/test2/test3/file5.feature",
 					"/tmp/ghokin/test2/test3/file6.feature",
 				} {
-					assert.NoError(t, os.WriteFile(f, []byte(fmt.Sprintf(string(content), i)), 0777))
+					assert.NoError(t, os.WriteFile(f, []byte(fmt.Sprintf(string(content), i)), 0o777))
 				}
 			},
 			func(errs []error) {
@@ -532,14 +532,14 @@ hello world
 `)
 
 				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin/test1", 0777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0o777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin/test1", 0o777))
 
-				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", content, 0777))
-				assert.NoError(t, os.WriteFile("/tmp/ghokin/file2.feature", append([]byte("whatever"), content...), 0777))
-				assert.NoError(t, os.WriteFile("/tmp/ghokin/test1/file3.feature", content, 0777))
-				assert.NoError(t, os.WriteFile("/tmp/ghokin/test1/file4.feature", content, 0777))
-				assert.NoError(t, os.WriteFile("/tmp/ghokin/test1/file5.feature", append([]byte("whatever"), content...), 0777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", content, 0o777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file2.feature", append([]byte("whatever"), content...), 0o777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/test1/file3.feature", content, 0o777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/test1/file4.feature", content, 0o777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/test1/file5.feature", append([]byte("whatever"), content...), 0o777))
 			},
 			func(errs []error) {
 				assert.Len(t, errs, 2)
@@ -582,11 +582,11 @@ hello world
 `)
 
 				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0o777))
 
-				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", content, 0777))
-				assert.NoError(t, os.WriteFile("/tmp/ghokin/file2.txt", content, 0777))
-				assert.NoError(t, os.WriteFile("/tmp/ghokin/file3.feat", content, 0777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", content, 0o777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file2.txt", content, 0o777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file3.feat", content, 0o777))
 			},
 			func(errs []error) {
 				assert.Len(t, errs, 2)
@@ -609,9 +609,9 @@ hello world
 			[]string{"feature"},
 			func() {
 				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0777))
-				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.txt", []byte("file1"), 0777))
-				assert.NoError(t, os.WriteFile("/tmp/ghokin/file2.txt", []byte("file2"), 0777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0o777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.txt", []byte("file1"), 0o777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file2.txt", []byte("file2"), 0o777))
 			},
 			func(errs []error) {
 				assert.Len(t, errs, 0)
