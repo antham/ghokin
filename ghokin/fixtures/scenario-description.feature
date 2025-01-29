@@ -2,7 +2,6 @@ Feature: A feature
 
   Scenario: Scenario name
   Scenario description
-
     Given a thing
 
   Scenario: Scenario name
