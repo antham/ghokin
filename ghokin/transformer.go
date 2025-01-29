@@ -108,7 +108,7 @@ func transform(section *section, indent int, aliases aliases) ([]byte, error) {
 				padding = indent
 			} else if isDescriptionScenario(sec) {
 				lines = trimLinesSpace(lines)
-				padding = paddings[gherkin.TokenTypeScenarioLine]
+				padding = paddings[gherkin.TokenTypeScenarioLine] + optionalRulePadding
 			}
 		}
 

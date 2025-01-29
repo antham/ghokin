@@ -1,13 +1,18 @@
 Feature: A feature
 
-  Scenario: First line
-  Second line
+  Scenario: Scenario name
+  Second description
 
     Given a thing
 
-  Scenario:
+  Scenario: Scenario name
   """
   Triple quotes first line
   Triple quotes second line
   """
     Given a thing
+
+  Rule: A rule
+    Scenario: Scenario name
+    Rule scenario description
+      Given a thing
