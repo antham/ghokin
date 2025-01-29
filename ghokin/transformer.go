@@ -106,6 +106,9 @@ func transform(section *section, indent int, aliases aliases) ([]byte, error) {
 			if isDescriptionFeature(sec) {
 				lines = trimLinesSpace(lines)
 				padding = indent
+			} else if isDescriptionScenario(sec) {
+				lines = trimLinesSpace(lines)
+				padding = paddings[gherkin.TokenTypeScenarioLine]
 			}
 		}
 
@@ -156,6 +159,16 @@ func isDescriptionFeature(sec *section) bool {
 	excluded := []gherkin.TokenType{gherkin.TokenTypeEmpty}
 	if sec.previous(excluded) != nil {
 		if s := sec.previous(excluded); s != nil && s.kind == gherkin.TokenTypeFeatureLine {
+			return true
+		}
+	}
+	return false
+}
+
+func isDescriptionScenario(sec *section) bool {
+	excluded := []gherkin.TokenType{gherkin.TokenTypeEmpty}
+	if sec.previous(excluded) != nil {
+		if s := sec.previous(excluded); s != nil && s.kind == gherkin.TokenTypeScenarioLine {
 			return true
 		}
 	}
