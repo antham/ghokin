@@ -1,7 +1,7 @@
 Feature: A feature
 
   Scenario: Scenario name
-  Second description
+  Scenario description
 
     Given a thing
 
