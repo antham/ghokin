@@ -463,6 +463,10 @@ func TestTransform(t *testing.T) {
 			"fixtures/scenario-description.feature",
 			"fixtures/scenario-description.feature",
 		},
+		{
+			"fixtures/escaping-in-examples.feature",
+			"fixtures/escaping-in-examples.feature",
+		},
 	}
 
 	for _, scenario := range scenarios {

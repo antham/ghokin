@@ -265,7 +265,9 @@ func extractTableRowsAndComments(tokens []*gherkin.Token) []string {
 				// A remaining pipe means it was escaped before to not be messed with pipe column delimiter
 				// so here we introduce the escaping sequence back
 				text := data.Text
-				text = strings.ReplaceAll(text, "\\", "\\\\")
+				if strings.Contains(text, "\\\n") {
+					text = strings.ReplaceAll(text, "\\\n", "\\\\\\n")
+				}
 				text = strings.ReplaceAll(text, "\n", "\\n")
 				text = strings.ReplaceAll(text, "|", "\\|")
 				row = append(row, text)
