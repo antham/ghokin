@@ -334,8 +334,9 @@ func runCommand(cmd *exec.Cmd, lines []string) ([]string, error) {
 		return lines, nil
 	}
 
+	cmd.Stderr = os.Stderr // output stderr to the console
 	cmd.Stdin = strings.NewReader(strings.Join(lines, "\n"))
-	o, err := cmd.CombinedOutput()
+	o, err := cmd.Output()
 	if err != nil {
 		return []string{}, CmdErr{strings.TrimRight(string(o), "\n")}
 	}
