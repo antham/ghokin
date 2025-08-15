@@ -416,6 +416,10 @@ func TestTransform(t *testing.T) {
 			"fixtures/cmd.expected.feature",
 		},
 		{
+			"fixtures/stderr.input.feature",
+			"fixtures/stderr.expected.feature",
+		},
+		{
 			"fixtures/multisize-table.input.feature",
 			"fixtures/multisize-table.expected.feature",
 		},
@@ -479,7 +483,8 @@ func TestTransform(t *testing.T) {
 			assert.NoError(t, err)
 
 			aliases := map[string]string{
-				"seq": "seq 1 3",
+				"seq":    "seq 1 3",
+				"stderr": `bash -c 'echo "this goes straight to stderr" >&2; cat'`,
 			}
 
 			buf, err := transform(s, 2, aliases)
