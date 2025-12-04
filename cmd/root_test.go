@@ -42,28 +42,28 @@ func TestInitConfig(t *testing.T) {
 		},
 		{
 			func() {
-				os.Setenv("GHOKIN_INDENT", "1")
-				os.Setenv("GHOKIN_ALIASES", `{"json":"jq"}`)
+				assert.NoError(t, os.Setenv("GHOKIN_INDENT", "1"))
+				assert.NoError(t, os.Setenv("GHOKIN_ALIASES", `{"json":"jq"}`))
 			},
 			func(exitCode int, stdin string, stderr string) {
 				assert.EqualValues(t, 1, viper.GetInt("indent"))
 				assert.EqualValues(t, map[string]string{"json": "jq"}, viper.GetStringMapString("aliases"))
 			},
 			func() {
-				os.Unsetenv("GHOKIN_INDENT")
-				os.Unsetenv("GHOKIN_ALIASES")
+				assert.NoError(t, os.Unsetenv("GHOKIN_INDENT"))
+				assert.NoError(t, os.Unsetenv("GHOKIN_ALIASES"))
 			},
 		},
 		{
 			func() {
-				os.Setenv("GHOKIN_ALIASES", `{"json":"jq"`)
+				assert.NoError(t, os.Setenv("GHOKIN_ALIASES", `{"json":"jq"`))
 			},
 			func(exitCode int, stdin string, stderr string) {
 				assert.EqualValues(t, 1, exitCode)
 				assert.EqualValues(t, "check aliases is a well-formed JSON : unexpected end of JSON input\n", stderr)
 			},
 			func() {
-				os.Unsetenv("GHOKIN_ALIASES")
+				assert.NoError(t, os.Unsetenv("GHOKIN_ALIASES"))
 			},
 		},
 		{
