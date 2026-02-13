@@ -2,6 +2,7 @@ package ghokin
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"os/exec"
 	"regexp"
@@ -82,6 +83,30 @@ func transform(section *section, indent int, aliases aliases) ([]byte, error) {
 			len(accumulator) > 0 && sec.kind == gherkin.TokenTypeComment ||
 			len(accumulator) > 0 && sec.kind == gherkin.TokenTypeTableRow {
 			accumulator = append(accumulator, sec.values...)
+			continue
+		}
+
+		if sec.kind == gherkin.TokenTypeDocStringSeparator && len(sec.values) == 1 && sec.values[0].Text == "json" {
+			document = append(
+				document,
+				trimExtraTrailingSpace(indentStrings(paddings[gherkin.TokenTypeOther], []string{`"""json`}))...,
+			)
+
+			var jsonLines string
+			for sec.nex.kind != gherkin.TokenTypeDocStringSeparator {
+				sec = sec.nex
+				for _, value := range sec.values {
+					jsonLines += value.Text
+				}
+			}
+
+			var prettyJSON bytes.Buffer
+			if err := json.Indent(&prettyJSON, []byte(jsonLines), "", "  "); err != nil {
+				return []byte{}, fmt.Errorf("failed to format json: %w", err)
+			}
+
+			document = append(document, trimExtraTrailingSpace(indentStrings(paddings[gherkin.TokenTypeOther], strings.Split(prettyJSON.String(), "\n")))...)
+
 			continue
 		}
 
