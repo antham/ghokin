@@ -432,6 +432,10 @@ func TestTransform(t *testing.T) {
 			"fixtures/comment-after-background.feature",
 		},
 		{
+			"fixtures/comment-with-newline.feature",
+			"fixtures/comment-with-newline.feature",
+		},
+		{
 			"fixtures/escape-pipe.feature",
 			"fixtures/escape-pipe.feature",
 		},

@@ -126,7 +126,11 @@ func transform(section *section, indent int, aliases aliases) ([]byte, error) {
 
 func getTagOrCommentPadding(paddings map[gherkin.TokenType]int, indent int, sec *section) int {
 	var kind gherkin.TokenType
-	excluded := []gherkin.TokenType{gherkin.TokenTypeTagLine, gherkin.TokenTypeComment}
+	excluded := []gherkin.TokenType{
+		gherkin.TokenTypeTagLine,
+		gherkin.TokenTypeComment,
+		gherkin.TokenTypeEmpty,
+	}
 	if sec.next(excluded) != nil {
 		if s := sec.next(excluded); s != nil {
 			kind = s.kind

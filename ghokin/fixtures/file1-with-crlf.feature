@@ -29,6 +29,8 @@ Feature: A Feature
       | Hello | world    | ! |
       | Hello | universe | ! |
 
+  # A comment with a newline before and after
+
   # A comment
   # A second comment
   @tag3 @tag4
