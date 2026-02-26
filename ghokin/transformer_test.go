@@ -410,6 +410,10 @@ func TestTransform(t *testing.T) {
 			"fixtures/file1.feature",
 			"fixtures/file1.feature",
 		},
+		{
+			"fixtures/json.input.feature",
+			"fixtures/json.expected.feature",
+		},
 
 		{
 			"fixtures/cmd.input.feature",
