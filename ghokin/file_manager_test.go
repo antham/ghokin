@@ -87,7 +87,7 @@ func TestFileManagerTransform(t *testing.T) {
 func TestFileManagerTransformAndReplace(t *testing.T) {
 	type scenario struct {
 		testName   string
-		path       string
+		paths      []string
 		extensions []string
 		setup      func()
 		test       func([]error)
@@ -95,8 +95,8 @@ func TestFileManagerTransformAndReplace(t *testing.T) {
 
 	scenarios := []scenario{
 		{
-			"Format a file",
-			"/tmp/ghokin/file1.feature",
+			"Format files",
+			[]string{"/tmp/ghokin/file1.feature", "/tmp/ghokin/file2.feature"},
 			[]string{"feature"},
 			func() {
 				content := []byte(`Feature: test
@@ -113,6 +113,7 @@ hello world
 				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
 				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0o777))
 				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", content, 0o777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file2.feature", content, 0o777))
 			},
 			func(errs []error) {
 				assert.Len(t, errs, 0)
@@ -131,11 +132,14 @@ hello world
 				b, e := os.ReadFile("/tmp/ghokin/file1.feature")
 				assert.NoError(t, e)
 				assert.EqualValues(t, content, string(b))
+				b, e = os.ReadFile("/tmp/ghokin/file2.feature")
+				assert.NoError(t, e)
+				assert.EqualValues(t, content, string(b))
 			},
 		},
 		{
-			"Format a folder",
-			"/tmp/ghokin/",
+			"Format folders",
+			[]string{"/tmp/ghokin-1/", "/tmp/ghokin-2/"},
 			[]string{"feature"},
 			func() {
 				content := []byte(`Feature: test
@@ -149,18 +153,23 @@ hello world
 """
 `)
 
-				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0o777))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin/test1", 0o777))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin/test2/test3", 0o777))
+				assert.NoError(t, os.RemoveAll("/tmp/ghokin-1"))
+				assert.NoError(t, os.RemoveAll("/tmp/ghokin-2"))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin-1", 0o777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin-1/test1", 0o777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin-1/test2/test3", 0o777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin-2/test5", 0o777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin-2/test6/test7", 0o777))
 
 				for i, f := range []string{
-					"/tmp/ghokin/file1.feature",
-					"/tmp/ghokin/file2.feature",
-					"/tmp/ghokin/test1/file3.feature",
-					"/tmp/ghokin/test1/file4.feature",
-					"/tmp/ghokin/test2/test3/file5.feature",
-					"/tmp/ghokin/test2/test3/file6.feature",
+					"/tmp/ghokin-1/file1.feature",
+					"/tmp/ghokin-1/file2.feature",
+					"/tmp/ghokin-1/test1/file3.feature",
+					"/tmp/ghokin-1/test1/file4.feature",
+					"/tmp/ghokin-1/test2/test3/file5.feature",
+					"/tmp/ghokin-1/test2/test3/file6.feature",
+					"/tmp/ghokin-2/test5/file7.feature",
+					"/tmp/ghokin-2/test6/test7/file8.feature",
 				} {
 					assert.NoError(t, os.WriteFile(f, []byte(fmt.Sprintf(string(content), i)), 0o777))
 				}
@@ -180,12 +189,14 @@ hello world
 `
 
 				for i, f := range []string{
-					"/tmp/ghokin/file1.feature",
-					"/tmp/ghokin/file2.feature",
-					"/tmp/ghokin/test1/file3.feature",
-					"/tmp/ghokin/test1/file4.feature",
-					"/tmp/ghokin/test2/test3/file5.feature",
-					"/tmp/ghokin/test2/test3/file6.feature",
+					"/tmp/ghokin-1/file1.feature",
+					"/tmp/ghokin-1/file2.feature",
+					"/tmp/ghokin-1/test1/file3.feature",
+					"/tmp/ghokin-1/test1/file4.feature",
+					"/tmp/ghokin-1/test2/test3/file5.feature",
+					"/tmp/ghokin-1/test2/test3/file6.feature",
+					"/tmp/ghokin-2/test5/file7.feature",
+					"/tmp/ghokin-2/test6/test7/file8.feature",
 				} {
 					b, e := os.ReadFile(f)
 					assert.NoError(t, e)
@@ -195,7 +206,7 @@ hello world
 		},
 		{
 			"Format a folder with parsing errors",
-			"/tmp/ghokin/",
+			[]string{"/tmp/ghokin/"},
 			[]string{"feature"},
 			func() {
 				content := []byte(`Feature: test
@@ -245,7 +256,7 @@ hello world
 		},
 		{
 			"Format a folder and set various extensions for feature files",
-			"/tmp/ghokin/",
+			[]string{"/tmp/ghokin/"},
 			[]string{"txt", "feat"},
 			func() {
 				content := []byte(`Feature: test
@@ -316,7 +327,7 @@ hello world
 		},
 		{
 			"Format folder with no feature files",
-			"/tmp/ghokin",
+			[]string{"/tmp/ghokin"},
 			[]string{"feature"},
 			func() {
 				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
@@ -330,7 +341,7 @@ hello world
 		},
 		{
 			"Format a file with different extension and an error",
-			"fixtures/file.txt",
+			[]string{"fixtures/file.txt"},
 			[]string{"txt"},
 			func() {},
 			func(errs []error) {
@@ -340,7 +351,7 @@ hello world
 		},
 		{
 			"Format an unexisting folder",
-			"whatever/whatever",
+			[]string{"whatever/whatever"},
 			[]string{"feature"},
 			func() {},
 			func(errs []error) {
@@ -350,7 +361,7 @@ hello world
 		},
 		{
 			"Format an invalid file",
-			"fixtures/invalid.feature",
+			[]string{"fixtures/invalid.feature"},
 			[]string{"feature"},
 			func() {},
 			func(errs []error) {
@@ -367,7 +378,7 @@ hello world
 					"seq": "seq 1 3",
 				},
 			)
-			scenario.test(f.TransformAndReplace(scenario.path, scenario.extensions))
+			scenario.test(f.TransformAndReplace(scenario.paths, scenario.extensions))
 		})
 	}
 }
@@ -375,7 +386,7 @@ hello world
 func TestFileManagerCheck(t *testing.T) {
 	type scenario struct {
 		testName   string
-		path       string
+		paths      []string
 		extensions []string
 		setup      func()
 		test       func([]error)
@@ -383,8 +394,8 @@ func TestFileManagerCheck(t *testing.T) {
 
 	scenarios := []scenario{
 		{
-			"Check a file wrongly formatted",
-			"/tmp/ghokin/file1.feature",
+			"Check files wrongly formatted",
+			[]string{"/tmp/ghokin/file1.feature", "/tmp/ghokin/file2.feature"},
 			[]string{"feature"},
 			func() {
 				content := []byte(`Feature: test
@@ -401,15 +412,17 @@ hello world
 				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
 				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0o777))
 				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", content, 0o777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file2.feature", content, 0o777))
 			},
 			func(errs []error) {
-				assert.Len(t, errs, 1)
+				assert.Len(t, errs, 2)
 				assert.EqualError(t, errs[0], `an error occurred with file "/tmp/ghokin/file1.feature" : file is not properly formatted`)
+				assert.EqualError(t, errs[1], `an error occurred with file "/tmp/ghokin/file2.feature" : file is not properly formatted`)
 			},
 		},
 		{
-			"Check a file correctly formatted",
-			"/tmp/ghokin/file1.feature",
+			"Check files are correctly formatted",
+			[]string{"/tmp/ghokin/file1.feature", "/tmp/ghokin/file2.feature"},
 			[]string{"feature"},
 			func() {
 				content := []byte(`Feature: test
@@ -425,14 +438,15 @@ hello world
 				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
 				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0o777))
 				assert.NoError(t, os.WriteFile("/tmp/ghokin/file1.feature", content, 0o777))
+				assert.NoError(t, os.WriteFile("/tmp/ghokin/file2.feature", content, 0o777))
 			},
 			func(errs []error) {
 				assert.Len(t, errs, 0)
 			},
 		},
 		{
-			"Check a folder is wrongly formatted",
-			"/tmp/ghokin/",
+			"Check folders are wrongly formatted",
+			[]string{"/tmp/ghokin-1/", "/tmp/ghokin-2/"},
 			[]string{"feature"},
 			func() {
 				content := []byte(`Feature: test
@@ -446,32 +460,40 @@ hello world
 """
 `)
 
-				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0o777))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin/test1", 0o777))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin/test2/test3", 0o777))
+				assert.NoError(t, os.RemoveAll("/tmp/ghokin-1"))
+				assert.NoError(t, os.RemoveAll("/tmp/ghokin-2"))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin-1", 0o777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin-2", 0o777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin-1/test1", 0o777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin-1/test2/test3", 0o777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin-2/test5", 0o777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin-2/test6/test7", 0o777))
 
 				for i, f := range []string{
-					"/tmp/ghokin/file1.feature",
-					"/tmp/ghokin/file2.feature",
-					"/tmp/ghokin/test1/file3.feature",
-					"/tmp/ghokin/test1/file4.feature",
-					"/tmp/ghokin/test2/test3/file5.feature",
-					"/tmp/ghokin/test2/test3/file6.feature",
+					"/tmp/ghokin-1/file1.feature",
+					"/tmp/ghokin-1/file2.feature",
+					"/tmp/ghokin-1/test1/file3.feature",
+					"/tmp/ghokin-1/test1/file4.feature",
+					"/tmp/ghokin-1/test2/test3/file5.feature",
+					"/tmp/ghokin-1/test2/test3/file6.feature",
+					"/tmp/ghokin-2/test5/file7.feature",
+					"/tmp/ghokin-2/test6/test7/file8.feature",
 				} {
 					assert.NoError(t, os.WriteFile(f, []byte(fmt.Sprintf(string(content), i)), 0o777))
 				}
 			},
 			func(errs []error) {
-				assert.Len(t, errs, 6)
+				assert.Len(t, errs, 8)
 
 				errors := map[string]bool{
-					`an error occurred with file "/tmp/ghokin/file1.feature" : file is not properly formatted`:             true,
-					`an error occurred with file "/tmp/ghokin/file2.feature" : file is not properly formatted`:             true,
-					`an error occurred with file "/tmp/ghokin/test1/file3.feature" : file is not properly formatted`:       true,
-					`an error occurred with file "/tmp/ghokin/test1/file4.feature" : file is not properly formatted`:       true,
-					`an error occurred with file "/tmp/ghokin/test2/test3/file5.feature" : file is not properly formatted`: true,
-					`an error occurred with file "/tmp/ghokin/test2/test3/file6.feature" : file is not properly formatted`: true,
+					`an error occurred with file "/tmp/ghokin-1/file1.feature" : file is not properly formatted`:             true,
+					`an error occurred with file "/tmp/ghokin-1/file2.feature" : file is not properly formatted`:             true,
+					`an error occurred with file "/tmp/ghokin-1/test1/file3.feature" : file is not properly formatted`:       true,
+					`an error occurred with file "/tmp/ghokin-1/test1/file4.feature" : file is not properly formatted`:       true,
+					`an error occurred with file "/tmp/ghokin-1/test2/test3/file5.feature" : file is not properly formatted`: true,
+					`an error occurred with file "/tmp/ghokin-1/test2/test3/file6.feature" : file is not properly formatted`: true,
+					`an error occurred with file "/tmp/ghokin-2/test5/file7.feature" : file is not properly formatted`:       true,
+					`an error occurred with file "/tmp/ghokin-2/test6/test7/file8.feature" : file is not properly formatted`: true,
 				}
 
 				for _, err := range errs {
@@ -482,8 +504,8 @@ hello world
 			},
 		},
 		{
-			"Check a folder is correctly formatted",
-			"/tmp/ghokin/",
+			"Check folders are correctly formatted",
+			[]string{"/tmp/ghokin-1/", "/tmp/ghokin-2/"},
 			[]string{"feature"},
 			func() {
 				content := []byte(`Feature: test
@@ -496,18 +518,23 @@ hello world
       """
 `)
 
-				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin", 0o777))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin/test1", 0o777))
-				assert.NoError(t, os.MkdirAll("/tmp/ghokin/test2/test3", 0o777))
+				assert.NoError(t, os.RemoveAll("/tmp/ghokin-1"))
+				assert.NoError(t, os.RemoveAll("/tmp/ghokin-2"))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin-1", 0o777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin-1/test1", 0o777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin-1/test2/test3", 0o777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin-2/test5", 0o777))
+				assert.NoError(t, os.MkdirAll("/tmp/ghokin-2/test6/test7", 0o777))
 
 				for i, f := range []string{
-					"/tmp/ghokin/file1.feature",
-					"/tmp/ghokin/file2.feature",
-					"/tmp/ghokin/test1/file3.feature",
-					"/tmp/ghokin/test1/file4.feature",
-					"/tmp/ghokin/test2/test3/file5.feature",
-					"/tmp/ghokin/test2/test3/file6.feature",
+					"/tmp/ghokin-1/file1.feature",
+					"/tmp/ghokin-1/file2.feature",
+					"/tmp/ghokin-1/test1/file3.feature",
+					"/tmp/ghokin-1/test1/file4.feature",
+					"/tmp/ghokin-1/test2/test3/file5.feature",
+					"/tmp/ghokin-1/test2/test3/file6.feature",
+					"/tmp/ghokin-2/test5/file7.feature",
+					"/tmp/ghokin-2/test6/test7/file8.feature",
 				} {
 					assert.NoError(t, os.WriteFile(f, []byte(fmt.Sprintf(string(content), i)), 0o777))
 				}
@@ -517,8 +544,8 @@ hello world
 			},
 		},
 		{
-			"Check a folder with parsing errors",
-			"/tmp/ghokin/",
+			"Check folders with parsing errors",
+			[]string{"/tmp/ghokin/"},
 			[]string{"feature"},
 			func() {
 				content := []byte(`Feature: test
@@ -567,7 +594,7 @@ hello world
 		},
 		{
 			"Check a folder and set various extensions for feature files",
-			"/tmp/ghokin/",
+			[]string{"/tmp/ghokin/"},
 			[]string{"txt", "feat"},
 			func() {
 				content := []byte(`Feature: test
@@ -605,7 +632,7 @@ hello world
 		},
 		{
 			"Check folder with no feature files",
-			"/tmp/ghokin",
+			[]string{"/tmp/ghokin"},
 			[]string{"feature"},
 			func() {
 				assert.NoError(t, os.RemoveAll("/tmp/ghokin"))
@@ -619,7 +646,7 @@ hello world
 		},
 		{
 			"Check a file with different extension and an error",
-			"fixtures/file.txt",
+			[]string{"fixtures/file.txt"},
 			[]string{"txt"},
 			func() {},
 			func(errs []error) {
@@ -629,7 +656,7 @@ hello world
 		},
 		{
 			"Check an unexisting folder",
-			"whatever/whatever",
+			[]string{"whatever/whatever"},
 			[]string{"feature"},
 			func() {},
 			func(errs []error) {
@@ -639,7 +666,7 @@ hello world
 		},
 		{
 			"Check an invalid file",
-			"fixtures/invalid.feature",
+			[]string{"fixtures/invalid.feature"},
 			[]string{"feature"},
 			func() {},
 			func(errs []error) {
@@ -658,7 +685,7 @@ hello world
 				},
 			)
 
-			scenario.test(f.Check(scenario.path, scenario.extensions))
+			scenario.test(f.Check(scenario.paths, scenario.extensions))
 		})
 	}
 }

@@ -5,18 +5,18 @@ import (
 )
 
 var checkCmd = &cobra.Command{
-	Use:   "check [file or folder path]",
-	Short: "Check a file/folder is well formatted",
-	Long:  "Check a file/folder is well formatted, otherwise it exit with an error code and the list of file badly formatted",
+	Use:   "check [files or folders path]",
+	Short: "Check files/folders are well formatted",
+	Long:  "Check files/folders are well formatted, otherwise it exit with an error code and the list of file badly formatted",
 	Run:   setupCmdFunc(check),
 }
 
 func check(msgHandler messageHandler, cmd *cobra.Command, args []string) {
-	if len(args) != 1 {
-		msgHandler.errorFatalStr("you must provide a filename or a folder as argument")
+	if len(args) == 0 {
+		msgHandler.errorFatalStr("you must provide filenames or folders as argument")
 	}
 
-	if errs := getFileManager().Check(args[0], extensions); len(errs) > 0 {
+	if errs := getFileManager().Check(args, extensions); len(errs) > 0 {
 		for _, e := range errs {
 			msgHandler.error(e)
 		}
@@ -24,7 +24,9 @@ func check(msgHandler messageHandler, cmd *cobra.Command, args []string) {
 		msgHandler.exit(1)
 	}
 
-	msgHandler.success(`"%s" is well formatted`, args[0])
+	for _, a := range args {
+		msgHandler.success(`"%s" is well formatted`, a)
+	}
 }
 
 func init() {
