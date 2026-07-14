@@ -7,17 +7,17 @@ import (
 var extensions []string
 
 var fmtReplaceCmd = &cobra.Command{
-	Use:   "replace [file or folder path]",
-	Short: "Format and replace a file or a pool of files in folder",
+	Use:   "replace [files or folders path]",
+	Short: "Format and replace files",
 	Run:   setupCmdFunc(formatAndReplace),
 }
 
 func formatAndReplace(msgHandler messageHandler, cmd *cobra.Command, args []string) {
-	if len(args) != 1 {
-		msgHandler.errorFatalStr("you must provide a filename or a folder as argument")
+	if len(args) == 0 {
+		msgHandler.errorFatalStr("you must provide filenames or folders as argument")
 	}
 
-	if errs := getFileManager().TransformAndReplace(args[0], extensions); len(errs) > 0 {
+	if errs := getFileManager().TransformAndReplace(args, extensions); len(errs) > 0 {
 		for _, e := range errs {
 			msgHandler.error(e)
 		}
@@ -25,7 +25,9 @@ func formatAndReplace(msgHandler messageHandler, cmd *cobra.Command, args []stri
 		msgHandler.exit(1)
 	}
 
-	msgHandler.success(`"%s" formatted`, args[0])
+	for _, a := range args {
+		msgHandler.success(`"%s" formatted`, a)
+	}
 }
 
 func init() {

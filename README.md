@@ -26,9 +26,11 @@ Usage:
   ghokin [command]
 
 Available Commands:
-  check       Check a file/folder is well formatted
-  fmt         Format a feature file/folder
+  check       Check files/folders are well formatted
+  completion  Generate the autocompletion script for the specified shell
+  fmt         Format stdin or feature files/folders
   help        Help about any command
+  version     App version
 
 Flags:
       --config string   config file
@@ -55,30 +57,30 @@ cat features/test.feature|ghokin fmt stdout
 
 ### fmt replace
 
-Format and replace a file or all files in a directory
+Format and replace files or all files in one or several directory
 
 ```
-ghokin fmt replace features/test.feature
+ghokin fmt replace features/test-1.feature features/test-2.feature
 ```
 
 or
 
 ```
-ghokin fmt replace features/
+ghokin fmt replace features-1/ features-2/
 ```
 
 ### check
 
-Ensure a file or all files in a directory are well formatted, exit with an error code otherwise
+Ensure files or all files in one or several directory are well formatted, exit with an error code otherwise
 
 ```
-ghokin check features/test.feature
+ghokin check features/test-1.feature features/test-2.feature
 ```
 
 or
 
 ```
-ghokin check features/
+ghokin check features-1/ features-2/
 ```
 
 ## Documentation

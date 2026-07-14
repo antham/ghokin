@@ -77,7 +77,7 @@ func TestCheckErrors(t *testing.T) {
 	scenarios := []scenario{
 		{
 			[]string{},
-			"you must provide a filename or a folder as argument\n",
+			"you must provide filenames or folders as argument\n",
 		},
 		{
 			[]string{"fixtures/whatever.feature"},

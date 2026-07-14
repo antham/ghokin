@@ -79,32 +79,34 @@ func (f FileManager) Transform(filename string) ([]byte, error) {
 
 // TransformAndReplace formats and applies shell commands on file or folder
 // and replace the content of files
-func (f FileManager) TransformAndReplace(path string, extensions []string) []error {
-	return f.process(path, extensions, replaceFileWithContent)
+func (f FileManager) TransformAndReplace(paths []string, extensions []string) []error {
+	return f.process(paths, extensions, replaceFileWithContent)
 }
 
 // Check ensures file or folder is well formatted
-func (f FileManager) Check(path string, extensions []string) []error {
-	return f.process(path, extensions, check)
+func (f FileManager) Check(paths []string, extensions []string) []error {
+	return f.process(paths, extensions, check)
 }
 
-func (f FileManager) process(path string, extensions []string, processFile func(file string, content []byte) error) []error {
+func (f FileManager) process(paths []string, extensions []string, processFile func(file string, content []byte) error) []error {
 	errors := []error{}
-	fi, err := os.Stat(path)
-	if err != nil {
-		return append(errors, err)
-	}
-
-	switch mode := fi.Mode(); {
-	case mode.IsDir():
-		errors = append(errors, f.processPath(path, extensions, processFile)...)
-	case mode.IsRegular():
-		b, err := f.Transform(path)
+	for _, path := range paths {
+		fi, err := os.Stat(path)
 		if err != nil {
 			return append(errors, err)
 		}
-		if err := processFile(path, b); err != nil {
-			errors = append(errors, err)
+
+		switch mode := fi.Mode(); {
+		case mode.IsDir():
+			errors = append(errors, f.processPath(path, extensions, processFile)...)
+		case mode.IsRegular():
+			b, err := f.Transform(path)
+			if err != nil {
+				return append(errors, err)
+			}
+			if err := processFile(path, b); err != nil {
+				errors = append(errors, err)
+			}
 		}
 	}
 	return errors
@@ -124,7 +126,7 @@ func (f FileManager) processPath(path string, extensions []string, processFile f
 		return []error{}
 	}
 
-	for i := 0; i < 10; i++ {
+	for range 10 {
 		wg.Add(1)
 
 		go func() {
